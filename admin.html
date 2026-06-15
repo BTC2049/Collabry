@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>管理後台｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="directory.css">
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body class="admin-body" data-page="admin">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.svg" alt="" width="34" height="34">
+        <span>Collabry Admin</span>
+      </a>
+      <a class="profile-entry" href="index.html">返回網站</a>
+    </header>
+
+    <main class="admin-shell">
+      <section class="admin-loading" id="admin-loading">
+        <span class="admin-spinner"></span>
+        <h1>正在驗證管理員權限</h1>
+        <p>請稍候，不會向未授權帳號顯示會員資料。</p>
+      </section>
+
+      <section class="admin-denied" id="admin-denied" hidden>
+        <span>!</span>
+        <h1>無權存取管理後台</h1>
+        <p>請使用已被設為管理員的 Google 帳號登入。</p>
+        <a class="button button-primary" href="index.html#match">返回登入</a>
+      </section>
+
+      <div id="admin-content" hidden>
+        <section class="admin-heading">
+          <div>
+            <p class="eyebrow">COLLABRY ADMIN</p>
+            <h1>平台數據總覽</h1>
+            <p>會員資料、角色分布與個人檔案完成狀態。</p>
+          </div>
+          <button class="button button-primary" id="export-users">匯出 Excel CSV ↓</button>
+        </section>
+
+        <section class="admin-stats">
+          <article><span>全部會員</span><strong id="stat-total">0</strong><small>已建立帳號</small></article>
+          <article><span>創作者</span><strong id="stat-creators">0</strong><small>Creator profiles</small></article>
+          <article><span>品牌</span><strong id="stat-brands">0</strong><small>Brand profiles</small></article>
+          <article><span>完成檔案</span><strong id="stat-complete">0</strong><small>已填寫公開資料</small></article>
+        </section>
+
+        <section class="admin-table-card">
+          <div class="admin-toolbar">
+            <div>
+              <h2>會員名單</h2>
+              <span id="table-count">0 筆資料</span>
+            </div>
+            <input id="admin-search" type="search" placeholder="搜尋姓名、Email 或角色">
+          </div>
+          <div class="admin-table-scroll">
+            <table>
+              <thead><tr><th>會員</th><th>角色</th><th>Email</th><th>檔案狀態</th><th>加入時間</th></tr></thead>
+              <tbody id="users-table"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="admin.js"></script>
+  </body>
+</html>

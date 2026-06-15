@@ -184,6 +184,37 @@ h1 em { color: var(--orange); font-style: normal; }
 .google-button { width: 100%; height: 50px; border: 1px solid var(--line); border-radius: 999px; background: white; cursor: pointer; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
 .google-button svg { width: 18px; height: 18px; }
 .google-button.loading { opacity: .65; cursor: wait; }
+.signed-in-panel { display: grid; gap: 14px; }
+.signed-in-status {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #a9ddca;
+  border-radius: 14px;
+  background: #effaf6;
+}
+.signed-check {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--mint);
+  color: #17684c;
+  font-weight: 900;
+}
+.signed-in-status div { min-width: 0; }
+.signed-in-status strong, .signed-in-status small { display: block; }
+.signed-in-status strong { color: #17684c; font-size: 14px; }
+.signed-in-status small {
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .google-button.signin-highlight {
   border-color: var(--orange);
   box-shadow: 0 0 0 5px rgba(255,95,61,.14);

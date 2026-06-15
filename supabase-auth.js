@@ -91,6 +91,22 @@ function addAccountMenu(user, supabase) {
   }
 }
 
+async function addAdminEntry(supabase) {
+  const dropdown = document.querySelector(".account-dropdown");
+  if (!dropdown || dropdown.querySelector("[data-admin-link]")) return;
+  const { data } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .single();
+  if (!data?.is_admin) return;
+
+  const link = document.createElement("a");
+  link.href = "admin.html";
+  link.dataset.adminLink = "";
+  link.innerHTML = "管理後台 <span>↗</span>";
+  dropdown.querySelector(".account-signout").before(link);
+}
+
 function syncUser(user) {
   const metadata = user.user_metadata || {};
   localStorage.setItem(
@@ -102,6 +118,25 @@ function syncUser(user) {
       photoURL: metadata.avatar_url || metadata.picture || "",
     })
   );
+}
+
+function renderSignedInPanel(user) {
+  const button = document.querySelector("#google-signin");
+  const form = button?.closest(".match-form");
+  if (!button || !form || form.querySelector(".signed-in-panel")) return;
+
+  button.hidden = true;
+  form.querySelector(".or")?.setAttribute("hidden", "");
+  const metadata = user.user_metadata || {};
+  const panel = document.createElement("div");
+  panel.className = "signed-in-panel";
+  panel.innerHTML = `
+    <div class="signed-in-status">
+      <span class="signed-check">✓</span>
+      <div><strong>已登入</strong><small>${user.email || ""}</small></div>
+    </div>
+    <a class="button button-dark button-full" href="${profileForRole()}">進入我的個人頁 <span>→</span></a>`;
+  button.before(panel);
 }
 
 if (!configured) {
@@ -162,6 +197,8 @@ if (!configured) {
   if (session?.user) {
     syncUser(session.user);
     addAccountMenu(session.user, supabase);
+    addAdminEntry(supabase);
+    renderSignedInPanel(session.user);
     const emailInput = document.querySelector('#profile-form input[name="email"]');
     if (emailInput && !emailInput.value) {
       emailInput.value = session.user.email || "";
@@ -182,6 +219,35 @@ if (!configured) {
   supabase.auth.onAuthStateChange((event, currentSession) => {
     if (event === "SIGNED_IN" && currentSession?.user) {
       syncUser(currentSession.user);
+      renderSignedInPanel(currentSession.user);
     }
+  });
+
+  window.addEventListener("collabry:profile-saved", async (event) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      showAuthMessage("請先登入後再儲存個人頁。");
+      return;
+    }
+
+    const { role, profile } = event.detail;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        email: user.email,
+        display_name:
+          profile.displayName ||
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          "",
+        role,
+        profile_data: profile,
+        profile_completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+    if (error) showAuthMessage(`雲端儲存失敗：${error.message}`);
   });
 }

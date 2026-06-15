@@ -203,6 +203,11 @@ function setupProfile() {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
     localStorage.setItem(storageKey, JSON.stringify(data));
+    window.dispatchEvent(
+      new CustomEvent("collabry:profile-saved", {
+        detail: { role, profile: data },
+      })
+    );
     const status = document.querySelector("#save-status");
     status.textContent = "已儲存變更 ✓";
     status.classList.add("show");

@@ -105,6 +105,15 @@ async function addAdminEntry(supabase) {
   link.dataset.adminLink = "";
   link.innerHTML = "管理後台 <span>↗</span>";
   dropdown.querySelector(".account-signout").before(link);
+
+  const menuLinks = document.querySelector(".menu-links");
+  if (menuLinks && !menuLinks.querySelector("[data-admin-link]")) {
+    const menuAdmin = document.createElement("a");
+    menuAdmin.href = "admin.html";
+    menuAdmin.dataset.adminLink = "";
+    menuAdmin.innerHTML = "<span>06</span>管理後台";
+    menuLinks.appendChild(menuAdmin);
+  }
 }
 
 function syncUser(user) {
@@ -125,18 +134,24 @@ function renderSignedInPanel(user) {
   const form = button?.closest(".match-form");
   if (!button || !form || form.querySelector(".signed-in-panel")) return;
 
-  button.hidden = true;
-  form.querySelector(".or")?.setAttribute("hidden", "");
+  form.classList.add("is-authenticated");
   const metadata = user.user_metadata || {};
   const panel = document.createElement("div");
   panel.className = "signed-in-panel";
   panel.innerHTML = `
     <div class="signed-in-status">
-      <span class="signed-check">✓</span>
-      <div><strong>已登入</strong><small>${user.email || ""}</small></div>
+      ${metadata.avatar_url
+        ? `<img class="signed-user-avatar" src="${metadata.avatar_url}" alt="">`
+        : `<span class="signed-check">✓</span>`}
+      <div>
+        <span class="signed-label">ACCOUNT CONNECTED</span>
+        <strong>已登入</strong>
+        <small>${metadata.full_name || user.email || ""}</small>
+        ${metadata.full_name && user.email ? `<small>${user.email}</small>` : ""}
+      </div>
     </div>
     <a class="button button-dark button-full" href="${profileForRole()}">進入我的個人頁 <span>→</span></a>`;
-  button.before(panel);
+  form.prepend(panel);
 }
 
 if (!configured) {

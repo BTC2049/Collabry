@@ -13,6 +13,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
@@ -184,14 +185,20 @@ h1 em { color: var(--orange); font-style: normal; }
 .google-button { width: 100%; height: 50px; border: 1px solid var(--line); border-radius: 999px; background: white; cursor: pointer; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 10px; }
 .google-button svg { width: 18px; height: 18px; }
 .google-button.loading { opacity: .65; cursor: wait; }
-.signed-in-panel { display: grid; gap: 14px; }
+.signed-in-panel { display: grid; gap: 16px; }
+.match-form.is-authenticated {
+  min-height: 365px;
+  align-content: center;
+}
+.match-form.is-authenticated > :not(.signed-in-panel) { display: none !important; }
 .signed-in-status {
-  padding: 15px;
+  min-height: 126px;
+  padding: 22px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   border: 1px solid #a9ddca;
-  border-radius: 14px;
+  border-radius: 18px;
   background: #effaf6;
 }
 .signed-check {
@@ -204,14 +211,31 @@ h1 em { color: var(--orange); font-style: normal; }
   color: #17684c;
   font-weight: 900;
 }
+.signed-user-avatar {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  border: 3px solid white;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 6px 16px rgba(17,29,42,.11);
+}
 .signed-in-status div { min-width: 0; }
 .signed-in-status strong, .signed-in-status small { display: block; }
-.signed-in-status strong { color: #17684c; font-size: 14px; }
+.signed-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #43816c;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+.signed-in-status strong { color: #17684c; font-size: 18px; }
 .signed-in-status small {
-  margin-top: 3px;
+  margin-top: 4px;
   overflow: hidden;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -357,6 +381,8 @@ dialog > p:not(.eyebrow) { color: var(--muted); line-height: 1.7; }
   .account-control { top: 13px; right: 70px; }
   .account-trigger { width: 40px; height: 40px; }
   .account-dropdown { position: fixed; top: 62px; right: 14px; width: min(260px, calc(100vw - 28px)); }
+  .match-form.is-authenticated { min-height: 330px; }
+  .signed-in-status { min-height: 112px; padding: 18px; }
   h1 { font-size: 50px; letter-spacing: -3px; }
   .hero-title {
     font-size: clamp(42px, 12vw, 57px);

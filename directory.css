@@ -299,7 +299,7 @@ body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
 .menu-links a:hover, .menu-links a.active { color: var(--orange); }
 .menu-cta { margin-top: auto; padding: 22px; border-radius: 18px; background: var(--cream); }
 .menu-cta p { margin: 0 0 16px; font-weight: 700; }
-.site-header { padding-right: clamp(82px, 9vw, 140px); }
+.site-header { padding-right: clamp(210px, 14vw, 270px); }
 
 @media (max-width: 900px) {
   .profile-grid { grid-template-columns: 1fr 1fr; }
@@ -317,4 +317,7 @@ body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
   .match-result { grid-template-columns: auto 1fr; }
   .match-score { grid-column: 1 / 3; display: flex; align-items: center; justify-content: space-between; text-align: left; }
   .match-score strong, .match-score small { display: inline; }
+}
+@media (max-width: 560px) {
+  .site-header { padding-right: 132px; }
 }

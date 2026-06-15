@@ -21,6 +21,12 @@ function showAuthMessage(message) {
 }
 
 function getSiteRoot() {
+  if (
+    window.location.hostname === "btc2049.github.io" &&
+    supabaseConfig.productionUrl
+  ) {
+    return new URL(supabaseConfig.productionUrl);
+  }
   const path = window.location.pathname;
   return new URL(path.slice(0, path.lastIndexOf("/") + 1), window.location.origin);
 }

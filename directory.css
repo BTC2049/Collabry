@@ -133,6 +133,7 @@
 .match-role-switch { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: white; box-shadow: 0 8px 24px rgba(17,29,42,.06); }
 .match-role-switch button { border: 0; border-radius: 999px; padding: 11px 18px; background: transparent; cursor: pointer; color: var(--muted); font-weight: 700; }
 .match-role-switch button.active { background: var(--ink); color: white; }
+.match-role-switch button:disabled:not(.active) { opacity: .4; cursor: not-allowed; }
 .profile-entry {
   min-height: 42px;
   padding: 0 17px;
@@ -254,6 +255,24 @@
 .match-score small { color: var(--muted); font-size: 10px; }
 .match-action { margin-top: 9px; min-height: 35px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 999px; background: white; cursor: pointer; font-size: 10px; font-weight: 800; }
 .match-action.matched { color: #167050; border-color: #9dd7c1; background: #ecfaf4; }
+.match-result-icon.has-avatar { background-position: center; background-size: cover; }
+.match-loading, .match-empty {
+  min-height: 260px;
+  padding: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.match-loading span {
+  width: 36px; height: 36px; border: 3px solid #dedad2; border-top-color: var(--orange);
+  border-radius: 50%; animation: match-spin .8s linear infinite;
+}
+.match-loading p, .match-empty p { color: var(--muted); font-size: 12px; }
+.match-empty .button { margin-top: 14px; }
+@keyframes match-spin { to { transform: rotate(360deg); } }
 
 .menu-toggle {
   position: fixed;
@@ -298,6 +317,7 @@ body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
 .menu-links { display: grid; gap: 0; }
 .menu-links a { padding: 18px 4px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); font-size: 23px; font-weight: 700; letter-spacing: -.7px; }
 .menu-links a span { color: #a9afb4; font-size: 10px; letter-spacing: 0; }
+.menu-links .menu-request-count { margin-left: auto; }
 .menu-links a:hover, .menu-links a.active { color: var(--orange); }
 .menu-cta { margin-top: auto; padding: 22px; border-radius: 18px; background: var(--cream); }
 .menu-cta p { margin: 0 0 16px; font-weight: 700; }
@@ -325,4 +345,10 @@ body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
 }
 @media (max-width: 560px) {
   .site-header { padding-right: 132px; }
+  .menu-toggle {
+    top: 12px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
 }

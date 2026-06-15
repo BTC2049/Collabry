@@ -1,5 +1,5 @@
--- Run this entire file once in Supabase Dashboard > SQL Editor.
--- Replace YOUR_ADMIN_EMAIL@example.com near the bottom before running.
+-- Run this entire file in Supabase Dashboard > SQL Editor.
+-- It is safe to re-run when updating permissions.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -7,13 +7,22 @@ create table if not exists public.profiles (
   display_name text,
   role text not null default 'creator' check (role in ('creator', 'brand')),
   profile_data jsonb not null default '{}'::jsonb,
+  avatar_url text,
   profile_completed_at timestamptz,
   is_admin boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
+alter table public.profiles
+add column if not exists avatar_url text;
+
 alter table public.profiles enable row level security;
+
+-- Data API privileges are separate from RLS policies. These grants are
+-- required because automatic table exposure was disabled at project setup.
+grant usage on schema public to authenticated;
+grant select on public.profiles to authenticated;
 
 create or replace function public.is_admin()
 returns boolean
@@ -85,9 +94,61 @@ grant update (
   display_name,
   role,
   profile_data,
+  avatar_url,
   profile_completed_at,
   updated_at
 ) on public.profiles to authenticated;
+
+-- Public profile images. Upload and update are restricted to each user's folder.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'avatars',
+  'avatars',
+  true,
+  5242880,
+  array['image/jpeg', 'image/png', 'image/webp']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can view avatars" on storage.objects;
+create policy "Public can view avatars"
+on storage.objects for select
+to public
+using (bucket_id = 'avatars');
+
+drop policy if exists "Users can upload own avatar" on storage.objects;
+create policy "Users can upload own avatar"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'avatars'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists "Users can update own avatar" on storage.objects;
+create policy "Users can update own avatar"
+on storage.objects for update
+to authenticated
+using (
+  bucket_id = 'avatars'
+  and (storage.foldername(name))[1] = auth.uid()::text
+)
+with check (
+  bucket_id = 'avatars'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+drop policy if exists "Users can delete own avatar" on storage.objects;
+create policy "Users can delete own avatar"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'avatars'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
 
 -- Backfill users who registered before this trigger was created.
 insert into public.profiles (id, email, display_name)
@@ -98,7 +159,7 @@ select
 from auth.users
 on conflict (id) do update set email = excluded.email;
 
--- IMPORTANT: replace this with the Google email used for your admin account.
+-- Re-apply the administrator flag after all existing users are backfilled.
 update public.profiles
 set is_admin = true
-where email = 'YOUR_ADMIN_EMAIL@example.com';
+where lower(email) = lower('willia098888@gmail.com');

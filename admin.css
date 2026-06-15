@@ -18,7 +18,7 @@
 .admin-denied > span { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: #ffe2da; color: #b43c28; font-size: 27px; font-weight: 900; }
 .admin-denied .button { margin-top: 20px; }
 .admin-heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 30px; }
-.admin-heading h1 { font-size: clamp(42px, 5vw, 66px); }
+.admin-heading h1 { font-size: clamp(38px, 4vw, 58px); line-height: 1.1; letter-spacing: -2px; }
 .admin-heading > div > p:last-child { color: var(--muted); }
 .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
 .admin-stats article { padding: 23px; border-radius: 18px; background: white; box-shadow: 0 8px 30px rgba(17,29,42,.05); }
@@ -33,10 +33,10 @@
 .admin-table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th, td { padding: 15px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-th { color: var(--muted); font-size: 9px; letter-spacing: .8px; text-transform: uppercase; }
+th { color: var(--muted); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
 .user-cell strong, .user-cell small { display: block; }
-.user-cell small { margin-top: 3px; color: var(--muted); font-size: 9px; }
-.role-badge, .status-badge { padding: 6px 9px; border-radius: 999px; font-size: 9px; font-weight: 800; }
+.user-cell small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.role-badge, .status-badge { padding: 6px 9px; border-radius: 999px; font-size: 10px; font-weight: 800; }
 .role-creator { color: #17684c; background: #e3f6ef; }
 .role-brand { color: #9a452f; background: #fff0eb; }
 .status-complete { color: #17684c; background: #e3f6ef; }
@@ -48,4 +48,6 @@ th { color: var(--muted); font-size: 9px; letter-spacing: .8px; text-transform: 
   .admin-heading, .admin-toolbar { align-items: stretch; flex-direction: column; }
   .admin-stats { grid-template-columns: 1fr 1fr; }
   .admin-toolbar input { width: 100%; }
+  .admin-shell { padding: 34px 16px 70px; }
+  .admin-table-card { padding: 18px; }
 }

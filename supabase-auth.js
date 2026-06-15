@@ -163,6 +163,72 @@ function renderSignedInPanel(user) {
   form.prepend(panel);
 }
 
+async function setupAvatarUpload(supabase, user) {
+  const input = document.querySelector("#avatar-upload");
+  const preview = document.querySelector("[data-avatar-preview]");
+  if (!input || !preview) return;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  function showAvatar(url) {
+    if (!url) return;
+    preview.style.backgroundImage = `url("${url}")`;
+    preview.classList.add("has-image");
+    preview.textContent = "";
+  }
+
+  showAvatar(profile?.avatar_url || user.user_metadata?.avatar_url);
+
+  input.addEventListener("change", async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      showAuthMessage("請上傳 JPG、PNG 或 WebP 圖片。");
+      input.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showAuthMessage("圖片不可超過 5 MB。");
+      input.value = "";
+      return;
+    }
+
+    showAvatar(URL.createObjectURL(file));
+    const uploader = input.previousElementSibling;
+    uploader?.classList.add("uploading");
+    const extension = file.name.split(".").pop().toLowerCase();
+    const path = `${user.id}/avatar-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { cacheControl: "3600", upsert: true });
+
+    if (uploadError) {
+      uploader?.classList.remove("uploading");
+      showAuthMessage(`圖片上傳失敗：${uploadError.message}`);
+      return;
+    }
+
+    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+    const avatarUrl = data.publicUrl;
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+      .eq("id", user.id);
+    uploader?.classList.remove("uploading");
+
+    if (profileError) {
+      showAuthMessage(`頭像資料更新失敗：${profileError.message}`);
+      return;
+    }
+    showAvatar(avatarUrl);
+    showAuthMessage("頭像已更新。");
+  });
+}
+
 if (!configured) {
   googleButton?.addEventListener("click", () => {
     showAuthMessage("尚未填入 Supabase 專案網址與 Publishable Key。");
@@ -223,6 +289,7 @@ if (!configured) {
     addAccountMenu(session.user, supabase);
     addAdminEntry(supabase, session.user);
     renderSignedInPanel(session.user);
+    setupAvatarUpload(supabase, session.user);
     const emailInput = document.querySelector('#profile-form input[name="email"]');
     if (emailInput && !emailInput.value) {
       emailInput.value = session.user.email || "";

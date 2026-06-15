@@ -41,6 +41,21 @@
 
 Google OAuth 無法在 `file://` 網址執行。登入成功後會依使用者選擇的身分，導向品牌或創作者個人頁。
 
+## 管理後台
+
+1. 到 Supabase Dashboard > SQL Editor。
+2. 開啟 `supabase-setup.sql`，將檔案底部的 `YOUR_ADMIN_EMAIL@example.com` 換成管理員 Google Email。
+3. 執行整份 SQL。
+4. 重新登入網站後，帳號選單會出現「管理後台」。
+
+管理後台位於 `admin.html`，只有 `is_admin = true` 的帳號能讀取會員資料。支援搜尋會員與匯出 Excel 可直接開啟的 UTF-8 CSV。
+
+## 頭像與品牌 Logo
+
+創作者與品牌個人頁支援 JPG、PNG、WebP 圖片，單檔上限 5 MB。圖片會上傳至 Supabase Storage 的 `avatars` bucket，路徑依會員 ID 隔離。
+
+更新此功能後，需再次到 Supabase SQL Editor 執行最新版 `supabase-setup.sql`，建立 Storage bucket、圖片權限與 `avatar_url` 欄位。
+
 ## 正式開發建議
 
 1. 使用 Supabase Auth 完成 Google OAuth 與會員身分管理。

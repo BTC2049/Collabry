@@ -35,7 +35,12 @@
 
       <div class="profile-layout">
         <aside class="profile-preview">
-          <div class="profile-avatar brand-avatar">B</div>
+          <label class="avatar-uploader brand-uploader" for="avatar-upload">
+            <span class="profile-avatar brand-avatar" data-avatar-preview>B</span>
+            <span class="avatar-edit">上傳 Logo</span>
+          </label>
+          <input class="avatar-input" id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp">
+          <small class="avatar-help">建議使用正方形 Logo，最大 5 MB</small>
           <span class="profile-role">Brand profile</span>
           <h2 data-preview="displayName">你的品牌名稱</h2>
           <p class="profile-bio-preview" data-preview="bio">在這裡介紹品牌理念、產品與希望傳達的價值。</p>

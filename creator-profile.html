@@ -35,7 +35,12 @@
 
       <div class="profile-layout">
         <aside class="profile-preview">
-          <div class="profile-avatar">Y</div>
+          <label class="avatar-uploader" for="avatar-upload">
+            <span class="profile-avatar" data-avatar-preview>Y</span>
+            <span class="avatar-edit">更換頭像</span>
+          </label>
+          <input class="avatar-input" id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp">
+          <small class="avatar-help">JPG、PNG 或 WebP，最大 5 MB</small>
           <span class="profile-role">Creator profile</span>
           <h2 data-preview="displayName">你的創作者名稱</h2>
           <p class="profile-bio-preview" data-preview="bio">在這裡介紹你的內容風格、受眾與特色。</p>

@@ -64,13 +64,16 @@ const {
 if (!user) {
   showDenied();
 } else {
+  const configuredAdmin = (supabaseConfig.adminEmails || []).some(
+    (email) => email.toLowerCase() === (user.email || "").toLowerCase()
+  );
   const { data: me } = await supabase
     .from("profiles")
     .select("is_admin")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (!me?.is_admin) {
+  if (!me?.is_admin && !configuredAdmin) {
     showDenied();
   } else {
     const { data, error } = await supabase

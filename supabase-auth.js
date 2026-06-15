@@ -91,20 +91,15 @@ function addAccountMenu(user, supabase) {
   }
 }
 
-async function addAdminEntry(supabase) {
+function renderAdminLinks() {
   const dropdown = document.querySelector(".account-dropdown");
-  if (!dropdown || dropdown.querySelector("[data-admin-link]")) return;
-  const { data } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .single();
-  if (!data?.is_admin) return;
-
-  const link = document.createElement("a");
-  link.href = "admin.html";
-  link.dataset.adminLink = "";
-  link.innerHTML = "管理後台 <span>↗</span>";
-  dropdown.querySelector(".account-signout").before(link);
+  if (dropdown && !dropdown.querySelector("[data-admin-link]")) {
+    const link = document.createElement("a");
+    link.href = "admin.html";
+    link.dataset.adminLink = "";
+    link.innerHTML = "管理後台 <span>↗</span>";
+    dropdown.querySelector(".account-signout").before(link);
+  }
 
   const menuLinks = document.querySelector(".menu-links");
   if (menuLinks && !menuLinks.querySelector("[data-admin-link]")) {
@@ -114,6 +109,20 @@ async function addAdminEntry(supabase) {
     menuAdmin.innerHTML = "<span>06</span>管理後台";
     menuLinks.appendChild(menuAdmin);
   }
+}
+
+async function addAdminEntry(supabase, user) {
+  const configuredAdmin = (supabaseConfig.adminEmails || []).some(
+    (email) => email.toLowerCase() === (user.email || "").toLowerCase()
+  );
+  if (configuredAdmin) renderAdminLinks();
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (data?.is_admin) renderAdminLinks();
 }
 
 function syncUser(user) {
@@ -212,7 +221,7 @@ if (!configured) {
   if (session?.user) {
     syncUser(session.user);
     addAccountMenu(session.user, supabase);
-    addAdminEntry(supabase);
+    addAdminEntry(supabase, session.user);
     renderSignedInPanel(session.user);
     const emailInput = document.querySelector('#profile-form input[name="email"]');
     if (emailInput && !emailInput.value) {

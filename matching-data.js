@@ -15,6 +15,7 @@ let currentRole =
   "brand";
 const requestedTarget = new URLSearchParams(window.location.search).get("target");
 let profiles = [];
+let aiRanking = new Map();
 
 function escapeHtml(value = "") {
   const element = document.createElement("div");
@@ -34,6 +35,7 @@ function profileSummary(profile) {
 }
 
 function scoreFor(profile, index) {
+  if (aiRanking.has(profile.id)) return aiRanking.get(profile.id).score;
   const completed = Object.values(profile.profile_data || {}).filter(Boolean).length;
   return Math.max(72, Math.min(96, 88 + completed - index * 2));
 }
@@ -46,6 +48,11 @@ function render() {
     const haystack = JSON.stringify(profile.profile_data || {}).toLowerCase();
     return query.every((term) => haystack.includes(term.toLowerCase()));
   });
+  if (aiRanking.size) {
+    visible.sort((left, right) =>
+      (aiRanking.get(right.id)?.score || 0) - (aiRanking.get(left.id)?.score || 0)
+    );
+  }
 
   count.textContent = `${visible.length} 位真實會員`;
   container.replaceChildren();
@@ -75,6 +82,9 @@ function render() {
         <span class="match-type">${profile.role === "brand" ? "合作品牌" : "創作者"}</span>
         <h3>${escapeHtml(name)}</h3>
         <p>${escapeHtml(profileSummary(profile) || "已完成 Collabry 個人檔案")}</p>
+        ${aiRanking.get(profile.id)?.reason
+          ? `<small class="ai-match-reason">AI 分析：${escapeHtml(aiRanking.get(profile.id).reason)}</small>`
+          : ""}
       </div>
       <div class="match-score">
         <strong>${scoreFor(profile, index)}%</strong>
@@ -181,6 +191,46 @@ async function sendRequest(receiver, button) {
   button.classList.add("matched");
 }
 
+async function runAiMatching() {
+  const button = document.querySelector("#ai-match-button");
+  const note = document.querySelector("#ai-match-note");
+  if (!button || button.disabled) return;
+  button.disabled = true;
+  button.textContent = "AI 分析中...";
+  note.className = "ai-match-note";
+  note.textContent = "Gemini 正在比較雙方領域、受眾、平台與合作條件。";
+
+  const filterValues = Object.fromEntries(
+    Object.entries(filters).map(([key, input]) => [key, input?.value.trim() || ""])
+  );
+  const { data, error } = await supabase.functions.invoke("ai-match", {
+    body: { filters: filterValues },
+  });
+
+  button.disabled = false;
+  button.textContent = "重新 AI 智慧排序";
+  if (error || !data?.rankings) {
+    aiRanking.clear();
+    note.className = "ai-match-note error";
+    note.textContent = data?.message || "AI 免費額度暫時無法使用，已保留一般媒合排序。";
+    render();
+    return;
+  }
+
+  aiRanking = new Map(
+    data.rankings.map((item) => [
+      item.id,
+      {
+        score: Math.max(0, Math.min(100, Number(item.score) || 0)),
+        reason: String(item.reason || "").slice(0, 90),
+      },
+    ])
+  );
+  note.className = "ai-match-note success";
+  note.textContent = `已完成 AI 排序，今天剩餘 ${data.remaining ?? 0} 次免費分析。`;
+  render();
+}
+
 window.addEventListener("collabry:match-role-changed", (event) => {
   currentRole = event.detail.role;
   loadProfiles();
@@ -189,5 +239,6 @@ Object.values(filters).forEach((input) => {
   input?.addEventListener("change", render);
   input?.addEventListener("input", render);
 });
+document.querySelector("#ai-match-button")?.addEventListener("click", runAiMatching);
 
 loadProfiles();

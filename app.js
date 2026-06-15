@@ -62,7 +62,7 @@ function setupHome() {
   document.querySelectorAll("[data-role-choice]").forEach((button) => {
     button.addEventListener("click", () => {
       window.location.href =
-        button.dataset.roleChoice === "creator" ? "creators.html" : "brands.html";
+        button.dataset.roleChoice === "creator" ? "brands.html" : "creators.html";
     });
   });
 

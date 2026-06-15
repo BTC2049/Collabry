@@ -259,7 +259,7 @@ as $$
     profile.id,
     profile.display_name,
     profile.role,
-    profile.profile_data,
+    profile.profile_data - 'email' - 'line' - 'contact' - 'phone' - 'address',
     profile.avatar_url,
     profile.profile_completed_at
   from public.profiles profile
@@ -267,11 +267,54 @@ as $$
     and profile.id <> auth.uid()
     and profile.role = requested_role
     and profile.is_published = true
-  order by profile.updated_at desc;
+  order by profile.is_admin desc, profile.updated_at desc;
 $$;
 
 revoke all on function public.get_match_profiles(text) from public;
 grant execute on function public.get_match_profiles(text) to authenticated;
+
+-- Daily Gemini usage guard. The Edge Function calls this before each AI sort.
+create table if not exists public.ai_match_usage (
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  usage_date date not null default (timezone('Asia/Taipei', now())::date),
+  request_count integer not null default 0,
+  primary key (user_id, usage_date)
+);
+
+alter table public.ai_match_usage enable row level security;
+revoke all on public.ai_match_usage from anon, authenticated;
+
+create or replace function public.consume_ai_match_credit(max_daily integer default 5)
+returns table (allowed boolean, remaining integer)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  next_count integer;
+begin
+  if auth.uid() is null then
+    return query select false, 0;
+    return;
+  end if;
+
+  insert into public.ai_match_usage (user_id, usage_date, request_count)
+  values (auth.uid(), timezone('Asia/Taipei', now())::date, 1)
+  on conflict (user_id, usage_date)
+  do update set request_count = public.ai_match_usage.request_count + 1
+  where public.ai_match_usage.request_count < max_daily
+  returning request_count into next_count;
+
+  if next_count is null then
+    return query select false, 0;
+  else
+    return query select true, greatest(max_daily - next_count, 0);
+  end if;
+end;
+$$;
+
+revoke all on function public.consume_ai_match_credit(integer) from public;
+grant execute on function public.consume_ai_match_credit(integer) to authenticated;
 
 -- Public directories expose published content but remove private contact fields.
 create or replace function public.get_published_profiles(requested_role text)
@@ -293,14 +336,14 @@ as $$
     profile.id,
     profile.display_name,
     profile.role,
-    profile.profile_data - 'email' - 'line' - 'contact',
+    profile.profile_data - 'email' - 'line' - 'contact' - 'phone' - 'address',
     profile.avatar_url,
     profile.is_published,
     profile.published_at
   from public.profiles profile
   where profile.role = requested_role
     and profile.is_published = true
-  order by profile.published_at desc nulls last;
+  order by profile.is_admin desc, profile.published_at desc nulls last;
 $$;
 
 revoke all on function public.get_published_profiles(text) from public;

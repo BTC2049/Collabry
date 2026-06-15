@@ -62,7 +62,7 @@ function card(profile) {
         : `<span class="avatar-letter ${profile.role === "brand" ? "brand-logo-shape" : ""}">${escapeHtml(name.slice(0,1))}</span>`}
     </div>
     <div class="profile-info">
-      <span class="category-label">${escapeHtml(category)}${profile.is_demo ? " · 示範帳戶" : ""}</span>
+      <span class="category-label">${escapeHtml(category)}</span>
       <div class="profile-meta"><h2>${escapeHtml(name)} <span class="verified">●</span></h2></div>
       <p>${escapeHtml(data.bio || "此會員已公開 Collabry 個人頁，歡迎進一步了解合作。")}</p>
       <div class="profile-tags"><span>${escapeHtml(platform)}</span><span>${escapeHtml(collaboration)}</span></div>

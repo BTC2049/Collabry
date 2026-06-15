@@ -122,7 +122,7 @@ function render(profile) {
   const matchButton = document.querySelector("#public-match-link");
   if (profile.is_demo) {
     matchButton.removeAttribute("href");
-    matchButton.textContent = "示範帳戶暫不接受邀請";
+    matchButton.textContent = "目前暫不接受邀請";
     matchButton.classList.add("is-disabled");
   } else {
     matchButton.href = `matching.html?role=${isBrand ? "creator" : "brand"}&target=${encodeURIComponent(profile.id)}`;

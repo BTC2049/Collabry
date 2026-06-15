@@ -5,6 +5,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "Mori Skin 森肌",
       is_demo: true,
+      avatar_url: "assets/demo/brand-mori.svg",
       profile_data: {
         category: "美妝保養",
         bio: "專注敏感肌保養的台灣品牌，希望與重視真實使用感受的創作者長期合作。",
@@ -22,6 +23,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "Hoom 好物所",
       is_demo: true,
+      avatar_url: "assets/demo/brand-hoom.svg",
       profile_data: {
         category: "生活選物",
         bio: "讓日常空間更舒服的居家選物品牌，尋找有生活感與空間美感的內容夥伴。",
@@ -39,6 +41,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "Oatday 燕麥日",
       is_demo: true,
+      avatar_url: "assets/demo/brand-oatday.svg",
       profile_data: {
         category: "食品飲品",
         bio: "新世代植物飲品牌，募集健康生活、美食與運動領域的短影音創作者。",
@@ -56,6 +59,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "ChainWave 鏈浪",
       is_demo: true,
+      avatar_url: "assets/demo/brand-chainwave.svg",
       profile_data: {
         category: "加密貨幣／Web3",
         bio: "提供台灣使用者容易理解的 Web3 教育內容與安全工具。",
@@ -73,6 +77,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "Pawday 毛日子",
       is_demo: true,
+      avatar_url: "assets/demo/brand-pawday.svg",
       profile_data: {
         category: "寵物",
         bio: "以透明成分與日常照護為核心的台灣寵物用品品牌。",
@@ -90,6 +95,7 @@ export const demoProfiles = {
       role: "brand",
       display_name: "Roam 島旅",
       is_demo: true,
+      avatar_url: "assets/demo/brand-roam.svg",
       profile_data: {
         category: "旅遊住宿",
         bio: "串連台灣在地旅宿與深度體驗，讓旅行回到人與地方的連結。",
@@ -109,6 +115,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "Yuna 日常選物",
       is_demo: true,
+      avatar_url: "assets/demo/creator-yuna.webp",
       profile_data: {
         category: "生活風格",
         bio: "分享租屋佈置、日常選物與簡單生活，擅長自然光影與情境式短影音。",
@@ -127,6 +134,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "Mia 保養研究室",
       is_demo: true,
+      avatar_url: "assets/demo/creator-mia.webp",
       profile_data: {
         category: "美妝保養",
         bio: "成分導向的保養內容創作者，以清楚比較與長期實測建立受眾信任。",
@@ -145,6 +153,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "莉莉育兒生活",
       is_demo: true,
+      avatar_url: "assets/demo/creator-lily.webp",
       profile_data: {
         category: "親子育兒",
         bio: "記錄雙寶家庭的真實日常，內容涵蓋親子用品、共讀與週末出遊。",
@@ -163,6 +172,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "Kai 週末出走",
       is_demo: true,
+      avatar_url: "assets/demo/creator-kai.webp",
       profile_data: {
         category: "旅遊住宿",
         bio: "用完整影像故事介紹台灣小旅行、戶外體驗與有特色的地方旅宿。",
@@ -181,6 +191,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "Zoe 理財慢慢說",
       is_demo: true,
+      avatar_url: "assets/demo/creator-zoe.webp",
       profile_data: {
         category: "財經投資",
         bio: "把複雜金融知識轉成容易理解的圖文與短影音，強調風險意識。",
@@ -199,6 +210,7 @@ export const demoProfiles = {
       role: "creator",
       display_name: "Anson 科技生活",
       is_demo: true,
+      avatar_url: "assets/demo/creator-anson.webp",
       profile_data: {
         category: "3C 科技",
         bio: "以實際使用情境評測手機、智慧家庭與效率工具。",

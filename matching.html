@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Collabry 智慧媒合，找到更適合的品牌或創作者。">
+    <title>智慧媒合｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="directory.css">
+  </head>
+  <body class="matching-body" data-page="matching">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.svg" alt="" width="34" height="34">
+        <span>Collabry</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="creators.html">創作者</a>
+        <a href="brands.html">品牌</a>
+        <a href="matching.html">智慧媒合</a>
+      </nav>
+    </header>
+
+    <main class="matching-shell">
+      <section class="matching-intro">
+        <div>
+          <p class="eyebrow">SMART MATCHING</p>
+          <h1 id="match-heading">為你精選的創作者</h1>
+          <p id="match-subheading">依照品牌調性、目標受眾與預算範圍排序</p>
+        </div>
+        <div class="match-role-switch" aria-label="選擇媒合身分">
+          <button class="active" data-match-role="brand">我是品牌</button>
+          <button data-match-role="creator">我是創作者</button>
+        </div>
+        <a class="profile-entry" id="profile-link" href="brand-profile.html">編輯我的個人頁 ↗</a>
+      </section>
+
+      <div class="matching-layout">
+        <aside class="match-sidebar">
+          <h2>調整媒合條件</h2>
+          <div class="match-field">
+            <label for="field">合作領域</label>
+            <div class="searchable-field">
+              <input id="field" type="text" list="field-options" placeholder="搜尋或輸入自訂領域" autocomplete="off">
+              <span aria-hidden="true">⌄</span>
+            </div>
+            <datalist id="field-options">
+              <option value="不限領域"></option>
+              <option value="生活風格"></option>
+              <option value="美妝保養"></option>
+              <option value="時尚穿搭"></option>
+              <option value="食品飲品"></option>
+              <option value="餐廳美食"></option>
+              <option value="旅遊住宿"></option>
+              <option value="親子家庭"></option>
+              <option value="健康保健"></option>
+              <option value="健身運動"></option>
+              <option value="3C 科技"></option>
+              <option value="遊戲電競"></option>
+              <option value="汽車機車"></option>
+              <option value="居家家電"></option>
+              <option value="寵物"></option>
+              <option value="音樂娛樂"></option>
+              <option value="影視動漫"></option>
+              <option value="教育學習"></option>
+              <option value="職場商業"></option>
+              <option value="財經投資"></option>
+              <option value="加密貨幣"></option>
+              <option value="Web3 / NFT"></option>
+              <option value="永續環保"></option>
+              <option value="藝術設計"></option>
+              <option value="攝影創作"></option>
+              <option value="公益倡議"></option>
+            </datalist>
+            <small class="field-hint">找不到合適選項時，可直接輸入自訂領域</small>
+          </div>
+          <div class="match-field">
+            <label for="platform">主要平台</label>
+            <div class="searchable-field">
+              <input id="platform" type="text" list="platform-options" placeholder="搜尋或輸入自訂平台" autocomplete="off">
+              <span aria-hidden="true">⌄</span>
+            </div>
+            <datalist id="platform-options">
+              <option value="不限平台"></option>
+              <option value="Instagram"></option>
+              <option value="Facebook"></option>
+              <option value="YouTube"></option>
+              <option value="TikTok"></option>
+              <option value="Threads"></option>
+              <option value="LINE VOOM"></option>
+              <option value="LINE 社群"></option>
+              <option value="Dcard"></option>
+              <option value="PTT"></option>
+              <option value="小紅書"></option>
+              <option value="Twitch"></option>
+              <option value="Podcast"></option>
+              <option value="X / Twitter"></option>
+              <option value="部落格"></option>
+              <option value="電子報"></option>
+              <option value="Discord"></option>
+              <option value="Telegram"></option>
+              <option value="LinkedIn"></option>
+            </datalist>
+            <small class="field-hint">支援台灣常用社群，也可輸入其他平台</small>
+          </div>
+          <div class="match-field">
+            <label for="budget">合作預算</label>
+            <div class="searchable-field">
+              <input id="budget" type="text" list="budget-options" placeholder="搜尋或輸入合作方式／預算" autocomplete="off">
+              <span aria-hidden="true">⌄</span>
+            </div>
+            <datalist id="budget-options">
+              <option value="不限預算"></option>
+              <option value="互惠合作"></option>
+              <option value="產品交換"></option>
+              <option value="體驗交換"></option>
+              <option value="銷售分潤"></option>
+              <option value="互惠合作＋銷售分潤"></option>
+              <option value="車馬費"></option>
+              <option value="NT$ 5,000 以下"></option>
+              <option value="NT$ 5,000–15,000"></option>
+              <option value="NT$ 15,000–30,000"></option>
+              <option value="NT$ 30,000–50,000"></option>
+              <option value="NT$ 50,000–100,000"></option>
+              <option value="NT$ 100,000 以上"></option>
+              <option value="依提案報價"></option>
+            </datalist>
+            <small class="field-hint">可輸入自訂金額或不同的合作交換方式</small>
+          </div>
+          <div class="match-field">
+            <label for="size">受眾／粉絲規模</label>
+            <input id="size" type="range" min="1" max="100" value="45">
+            <div class="range-label"><span>微型</span><span>中型</span></div>
+          </div>
+          <button class="button button-dark button-full">更新推薦</button>
+        </aside>
+
+        <section class="match-results">
+          <div class="match-results-top"><h2>最適合你的推薦</h2><span>今日更新 · 12 筆</span></div>
+
+          <article class="match-result">
+            <div class="match-result-icon cover-orange">Y</div>
+            <div>
+              <span class="match-type">生活創作者</span>
+              <h3>Yuna 日常選物</h3>
+              <p>受眾 84% 為 24–34 歲女性 · 居家、選物、生活風格</p>
+            </div>
+            <div class="match-score"><strong>94%</strong><small>契合度</small><button class="match-action">送出合作興趣</button></div>
+          </article>
+
+          <article class="match-result">
+            <div class="match-result-icon cover-mint">M</div>
+            <div>
+              <span class="match-type">美妝創作者</span>
+              <h3>Mia 保養研究室</h3>
+              <p>內容調性與品牌高度相符 · 平均互動率 8.2%</p>
+            </div>
+            <div class="match-score"><strong>91%</strong><small>契合度</small><button class="match-action">送出合作興趣</button></div>
+          </article>
+
+          <article class="match-result">
+            <div class="match-result-icon cover-lilac">L</div>
+            <div>
+              <span class="match-type">親子創作者</span>
+              <h3>莉莉育兒生活</h3>
+              <p>合作預算吻合 · 過去親子用品內容表現高於平均</p>
+            </div>
+            <div class="match-score"><strong>87%</strong><small>契合度</small><button class="match-action">送出合作興趣</button></div>
+          </article>
+
+          <article class="match-result">
+            <div class="match-result-icon cover-blue">K</div>
+            <div>
+              <span class="match-type">旅行創作者</span>
+              <h3>Kai 週末出走</h3>
+              <p>擅長完整影像敘事 · 適合體驗型與品牌形象合作</p>
+            </div>
+            <div class="match-score"><strong>82%</strong><small>契合度</small><button class="match-action">送出合作興趣</button></div>
+          </article>
+        </section>
+      </div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

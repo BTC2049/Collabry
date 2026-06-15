@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="編輯你的 Collabry 創作者個人頁。">
+    <title>創作者個人頁｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="directory.css">
+    <link rel="stylesheet" href="profile.css">
+  </head>
+  <body class="profile-body" data-page="creator-profile">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.svg" alt="" width="34" height="34">
+        <span>Collabry</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="creators.html">探索創作者</a>
+        <a href="brands.html">探索品牌</a>
+        <a href="matching.html?role=creator">我的媒合</a>
+      </nav>
+    </header>
+
+    <main class="profile-shell">
+      <section class="profile-page-heading">
+        <div>
+          <p class="eyebrow">CREATOR PROFILE</p>
+          <h1>編輯我的創作者頁</h1>
+          <p>資料越完整，品牌越容易理解你的風格與合作價值。</p>
+        </div>
+        <span class="save-status" id="save-status">已儲存變更 ✓</span>
+      </section>
+
+      <div class="profile-layout">
+        <aside class="profile-preview">
+          <div class="profile-avatar">Y</div>
+          <span class="profile-role">Creator profile</span>
+          <h2 data-preview="displayName">你的創作者名稱</h2>
+          <p class="profile-bio-preview" data-preview="bio">在這裡介紹你的內容風格、受眾與特色。</p>
+          <div class="preview-detail"><span>主要領域</span><strong data-preview="category">尚未設定</strong></div>
+          <div class="preview-detail"><span>主要平台</span><strong data-preview="platform">尚未設定</strong></div>
+          <div class="preview-detail"><span>粉絲規模</span><strong data-preview="followers">尚未設定</strong></div>
+          <div class="preview-detail"><span>合作方式</span><strong data-preview="collaboration">尚未設定</strong></div>
+          <div class="completion">
+            <div class="completion-top"><span>檔案完成度</span><strong id="completion-value">0%</strong></div>
+            <div class="completion-track"><i id="completion-bar"></i></div>
+          </div>
+        </aside>
+
+        <form class="profile-editor" id="profile-form" data-role="creator">
+          <section class="editor-section">
+            <h2>公開資料</h2>
+            <p>這些內容會出現在品牌搜尋與媒合結果中。</p>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="displayName">創作者名稱</label>
+                <input id="displayName" name="displayName" placeholder="例如：Yuna 日常選物" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="location">所在地</label>
+                <input id="location" name="location" placeholder="例如：台北市">
+              </div>
+              <div class="editor-field full">
+                <label for="bio">個人簡介</label>
+                <textarea id="bio" name="bio" placeholder="介紹你的內容風格、主要受眾與擅長的合作形式" data-completion></textarea>
+              </div>
+              <div class="editor-field">
+                <label for="category">主要內容領域</label>
+                <input id="category" name="category" placeholder="例如：生活風格、美妝保養" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="language">內容語言</label>
+                <select id="language" name="language"><option>繁體中文</option><option>英文</option><option>日文</option><option>多語言</option></select>
+              </div>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h2>平台與受眾</h2>
+            <p>提供主要平台與數據，讓品牌快速判斷受眾契合度。</p>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="platform">主要平台</label>
+                <input id="platform" name="platform" placeholder="Instagram、YouTube、Threads..." data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="handle">帳號名稱／連結</label>
+                <input id="handle" name="handle" placeholder="@youraccount">
+              </div>
+              <div class="editor-field">
+                <label for="followers">粉絲／訂閱數</label>
+                <input id="followers" name="followers" placeholder="例如：38,200" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="engagement">平均互動率</label>
+                <input id="engagement" name="engagement" placeholder="例如：6.8%">
+              </div>
+              <div class="editor-field">
+                <label for="audience">主要受眾</label>
+                <input id="audience" name="audience" placeholder="例如：24–34 歲女性">
+              </div>
+              <div class="editor-field">
+                <label for="portfolio">作品集連結</label>
+                <input id="portfolio" name="portfolio" type="url" placeholder="https://">
+              </div>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h2>合作偏好</h2>
+            <p>設定你願意接受的合作方式，減少不適合的邀請。</p>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="collaboration">接受的合作方式</label>
+                <input id="collaboration" name="collaboration" placeholder="付費、互惠、分潤..." data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="rate">參考報價</label>
+                <input id="rate" name="rate" placeholder="例如：NT$ 8,000 起">
+              </div>
+              <div class="editor-field full">
+                <label for="preferences">希望合作的品牌／不接受的類型</label>
+                <textarea id="preferences" name="preferences" placeholder="例如：偏好生活選物、保養品牌；不接受博弈類合作"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h2>聯絡方式</h2>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="email">合作 Email</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="line">LINE ID（選填）</label>
+                <input id="line" name="line" placeholder="僅媒合成功後提供">
+              </div>
+            </div>
+          </section>
+
+          <div class="profile-actions">
+            <button class="button button-ghost" id="view-public-profile" type="button">查看公開頁面</button>
+            <button class="button button-primary" type="submit">儲存個人頁</button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

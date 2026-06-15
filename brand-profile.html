@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="編輯你的 Collabry 品牌個人頁。">
+    <title>品牌個人頁｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="directory.css">
+    <link rel="stylesheet" href="profile.css">
+  </head>
+  <body class="profile-body" data-page="brand-profile">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.svg" alt="" width="34" height="34">
+        <span>Collabry</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="creators.html">探索創作者</a>
+        <a href="brands.html">探索品牌</a>
+        <a href="matching.html?role=brand">我的媒合</a>
+      </nav>
+    </header>
+
+    <main class="profile-shell">
+      <section class="profile-page-heading">
+        <div>
+          <p class="eyebrow">BRAND PROFILE</p>
+          <h1>編輯我的品牌頁</h1>
+          <p>讓創作者快速理解你的品牌、合作需求與預算範圍。</p>
+        </div>
+        <span class="save-status" id="save-status">已儲存變更 ✓</span>
+      </section>
+
+      <div class="profile-layout">
+        <aside class="profile-preview">
+          <div class="profile-avatar brand-avatar">B</div>
+          <span class="profile-role">Brand profile</span>
+          <h2 data-preview="displayName">你的品牌名稱</h2>
+          <p class="profile-bio-preview" data-preview="bio">在這裡介紹品牌理念、產品與希望傳達的價值。</p>
+          <div class="preview-detail"><span>品牌產業</span><strong data-preview="category">尚未設定</strong></div>
+          <div class="preview-detail"><span>合作平台</span><strong data-preview="platform">尚未設定</strong></div>
+          <div class="preview-detail"><span>合作預算</span><strong data-preview="budget">尚未設定</strong></div>
+          <div class="preview-detail"><span>合作方式</span><strong data-preview="collaboration">尚未設定</strong></div>
+          <div class="completion">
+            <div class="completion-top"><span>檔案完成度</span><strong id="completion-value">0%</strong></div>
+            <div class="completion-track"><i id="completion-bar"></i></div>
+          </div>
+        </aside>
+
+        <form class="profile-editor" id="profile-form" data-role="brand">
+          <section class="editor-section">
+            <h2>品牌基本資料</h2>
+            <p>這些資料會顯示在創作者的品牌探索與媒合結果中。</p>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="displayName">品牌名稱</label>
+                <input id="displayName" name="displayName" placeholder="例如：Mori Skin 森肌" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="company">公司名稱</label>
+                <input id="company" name="company" placeholder="公司／工作室正式名稱">
+              </div>
+              <div class="editor-field full">
+                <label for="bio">品牌介紹</label>
+                <textarea id="bio" name="bio" placeholder="介紹品牌理念、主要產品與希望傳遞的價值" data-completion></textarea>
+              </div>
+              <div class="editor-field">
+                <label for="category">品牌產業</label>
+                <input id="category" name="category" placeholder="例如：美妝保養、食品飲品、加密貨幣" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="website">品牌網站</label>
+                <input id="website" name="website" type="url" placeholder="https://">
+              </div>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h2>合作需求</h2>
+            <p>越具體的需求，越能媒合到真正合適的創作者。</p>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="platform">希望合作的平台</label>
+                <input id="platform" name="platform" placeholder="Instagram、YouTube、Threads..." data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="creatorType">理想創作者類型</label>
+                <input id="creatorType" name="creatorType" placeholder="例如：生活風格、女性受眾">
+              </div>
+              <div class="editor-field">
+                <label for="collaboration">合作方式</label>
+                <input id="collaboration" name="collaboration" placeholder="付費、互惠、分潤..." data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="budget">單次合作預算</label>
+                <input id="budget" name="budget" placeholder="例如：NT$ 8,000–20,000" data-completion>
+              </div>
+              <div class="editor-field full">
+                <label for="brief">合作內容與期待</label>
+                <textarea id="brief" name="brief" placeholder="想推廣的產品、內容形式、上線時間與主要目標"></textarea>
+              </div>
+              <div class="editor-field">
+                <label for="openings">目前開放名額</label>
+                <input id="openings" name="openings" type="number" min="1" placeholder="例如：5">
+              </div>
+              <div class="editor-field">
+                <label for="timeline">預計合作檔期</label>
+                <input id="timeline" name="timeline" placeholder="例如：2026 年 7–8 月">
+              </div>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <h2>聯絡窗口</h2>
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="contact">聯絡人姓名</label>
+                <input id="contact" name="contact" placeholder="例如：王小美">
+              </div>
+              <div class="editor-field">
+                <label for="email">工作 Email</label>
+                <input id="email" name="email" type="email" placeholder="brand@example.com" data-completion>
+              </div>
+              <div class="editor-field">
+                <label for="line">LINE ID（選填）</label>
+                <input id="line" name="line" placeholder="僅媒合成功後提供">
+              </div>
+              <div class="editor-field">
+                <label for="response">預計回覆時間</label>
+                <select id="response" name="response"><option>1–2 個工作天</option><option>3–5 個工作天</option><option>一週內</option></select>
+              </div>
+            </div>
+          </section>
+
+          <div class="profile-actions">
+            <button class="button button-ghost" id="view-public-profile" type="button">查看公開頁面</button>
+            <button class="button button-primary" type="submit">儲存品牌頁</button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

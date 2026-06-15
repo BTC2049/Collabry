@@ -89,11 +89,14 @@ function setupHome() {
 
   const google = document.querySelector("#google-signin");
   if (google) {
-    google.addEventListener("click", () => {
+    form.querySelectorAll('input[name="role"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        localStorage.setItem("collabry-role", input.value);
+      });
+    });
+    google.addEventListener("pointerdown", () => {
       const role = form.querySelector('input[name="role"]:checked').value;
       localStorage.setItem("collabry-role", role);
-      window.location.href =
-        role === "brand" ? "brand-profile.html" : "creator-profile.html";
     });
   }
 }

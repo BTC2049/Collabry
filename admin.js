@@ -8,9 +8,10 @@ const content = document.querySelector("#admin-content");
 const table = document.querySelector("#users-table");
 let rows = [];
 
-function showDenied() {
+function showDenied(message = "請使用已被設為管理員的 Google 帳號登入。") {
   loading.hidden = true;
   denied.hidden = false;
+  document.querySelector("#admin-error").textContent = message;
 }
 
 function formatDate(value) {
@@ -82,7 +83,7 @@ if (!user) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      showDenied();
+      showDenied(`後台資料讀取失敗：${error.message}`);
     } else {
       rows = data || [];
       loading.hidden = true;

@@ -30,7 +30,13 @@
           <h1>編輯我的品牌頁</h1>
           <p>讓創作者快速理解你的品牌、合作需求與預算範圍。</p>
         </div>
-        <span class="save-status" id="save-status">已儲存變更 ✓</span>
+        <div class="profile-heading-actions">
+          <div class="profile-type-switch" aria-label="選擇要編輯的個人頁">
+            <a href="creator-profile.html">創作者頁</a>
+            <a class="active" href="brand-profile.html">品牌頁</a>
+          </div>
+          <span class="save-status" id="save-status">已儲存變更 ✓</span>
+        </div>
       </section>
 
       <div class="profile-layout">
@@ -40,7 +46,7 @@
             <span class="avatar-edit">上傳 Logo</span>
           </label>
           <input class="avatar-input" id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp">
-          <small class="avatar-help">建議使用正方形 Logo，最大 5 MB</small>
+          <small class="avatar-help">建議正方形 Logo，自動壓縮至約 250 KB 以下</small>
           <span class="profile-role">Brand profile</span>
           <h2 data-preview="displayName">你的品牌名稱</h2>
           <p class="profile-bio-preview" data-preview="bio">在這裡介紹品牌理念、產品與希望傳達的價值。</p>

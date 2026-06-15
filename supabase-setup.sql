@@ -105,8 +105,8 @@ values (
   'avatars',
   'avatars',
   true,
-  5242880,
-  array['image/jpeg', 'image/png', 'image/webp']
+  384000,
+  array['image/webp']
 )
 on conflict (id) do update set
   public = excluded.public,
@@ -163,3 +163,147 @@ on conflict (id) do update set email = excluded.email;
 update public.profiles
 set is_admin = true
 where lower(email) = lower('willia098888@gmail.com');
+
+-- Collaboration requests: sender creates, receiver responds, both can view.
+create table if not exists public.collaboration_requests (
+  id uuid primary key default gen_random_uuid(),
+  sender_id uuid not null references public.profiles(id) on delete cascade default auth.uid(),
+  receiver_id uuid not null references public.profiles(id) on delete cascade,
+  message text not null default '',
+  status text not null default 'pending' check (status in ('pending', 'accepted', 'declined')),
+  created_at timestamptz not null default now(),
+  responded_at timestamptz,
+  constraint sender_is_not_receiver check (sender_id <> receiver_id),
+  constraint one_active_request unique (sender_id, receiver_id)
+);
+
+alter table public.collaboration_requests enable row level security;
+grant select, insert on public.collaboration_requests to authenticated;
+revoke update on public.collaboration_requests from authenticated;
+grant update (status, responded_at) on public.collaboration_requests to authenticated;
+
+create or replace function public.can_send_collaboration_request(target_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.profiles sender
+    join public.profiles receiver on receiver.id = target_id
+    where sender.id = auth.uid()
+      and receiver.id <> sender.id
+      and receiver.profile_completed_at is not null
+      and sender.role <> receiver.role
+  );
+$$;
+
+revoke all on function public.can_send_collaboration_request(uuid) from public;
+grant execute on function public.can_send_collaboration_request(uuid) to authenticated;
+
+drop policy if exists "Participants can view requests" on public.collaboration_requests;
+create policy "Participants can view requests"
+on public.collaboration_requests for select
+to authenticated
+using (sender_id = auth.uid() or receiver_id = auth.uid());
+
+drop policy if exists "Users can send requests" on public.collaboration_requests;
+create policy "Users can send requests"
+on public.collaboration_requests for insert
+to authenticated
+with check (
+  sender_id = auth.uid()
+  and receiver_id <> auth.uid()
+  and public.can_send_collaboration_request(receiver_id)
+);
+
+drop policy if exists "Receivers can respond" on public.collaboration_requests;
+create policy "Receivers can respond"
+on public.collaboration_requests for update
+to authenticated
+using (receiver_id = auth.uid())
+with check (receiver_id = auth.uid());
+
+drop policy if exists "Admins can read all requests" on public.collaboration_requests;
+create policy "Admins can read all requests"
+on public.collaboration_requests for select
+to authenticated
+using (public.is_admin());
+
+-- Return matching candidates without exposing private email addresses.
+create or replace function public.get_match_profiles(requested_role text)
+returns table (
+  id uuid,
+  display_name text,
+  role text,
+  profile_data jsonb,
+  avatar_url text,
+  profile_completed_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    profile.id,
+    profile.display_name,
+    profile.role,
+    profile.profile_data,
+    profile.avatar_url,
+    profile.profile_completed_at
+  from public.profiles profile
+  where auth.uid() is not null
+    and profile.id <> auth.uid()
+    and profile.role = requested_role
+    and profile.profile_completed_at is not null
+  order by profile.updated_at desc;
+$$;
+
+revoke all on function public.get_match_profiles(text) from public;
+grant execute on function public.get_match_profiles(text) to authenticated;
+
+-- Return both inbox and sent requests with the other party's public identity.
+create or replace function public.get_my_collaboration_requests()
+returns table (
+  id uuid,
+  direction text,
+  other_id uuid,
+  other_name text,
+  other_avatar text,
+  other_email text,
+  message text,
+  status text,
+  created_at timestamptz,
+  responded_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    request.id,
+    case when request.receiver_id = auth.uid() then 'received' else 'sent' end,
+    other_profile.id,
+    other_profile.display_name,
+    other_profile.avatar_url,
+    case when request.status = 'accepted' then other_profile.email else null end,
+    request.message,
+    request.status,
+    request.created_at,
+    request.responded_at
+  from public.collaboration_requests request
+  join public.profiles other_profile
+    on other_profile.id = case
+      when request.receiver_id = auth.uid() then request.sender_id
+      else request.receiver_id
+    end
+  where request.sender_id = auth.uid() or request.receiver_id = auth.uid()
+  order by request.created_at desc;
+$$;
+
+revoke all on function public.get_my_collaboration_requests() from public;
+grant execute on function public.get_my_collaboration_requests() to authenticated;

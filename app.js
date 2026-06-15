@@ -25,7 +25,8 @@ function createMenu() {
         <a href="creators.html" ${page === "creators" ? 'class="active"' : ""}><span>02</span>探索創作者</a>
         <a href="brands.html" ${page === "brands" ? 'class="active"' : ""}><span>03</span>探索品牌</a>
         <a href="matching.html" ${page === "matching" ? 'class="active"' : ""}><span>04</span>智慧媒合</a>
-        <a href="${profileHref}" ${page.includes("profile") ? 'class="active"' : ""}><span>05</span>我的個人頁</a>
+        <a href="requests.html" ${page === "requests" ? 'class="active"' : ""}><span>05</span>合作邀請 <b class="menu-request-count request-count" data-request-count></b></a>
+        <a href="${profileHref}" ${page.includes("profile") ? 'class="active"' : ""}><span>06</span>我的個人頁</a>
       </nav>
       <div class="menu-cta">
         <p>準備找到下一個好合作？</p>
@@ -147,11 +148,11 @@ function setupMatching() {
       copy.textContent = creator
         ? "依照你的內容領域、受眾與合作偏好排序"
         : "依照品牌調性、目標受眾與預算範圍排序";
-      document.querySelectorAll(".match-result").forEach((card, index) => {
-        card.querySelector(".match-type").textContent = creator
-          ? ["保養品牌", "生活選物", "健康食品"][index]
-          : ["生活創作者", "美妝創作者", "親子創作者"][index];
-      });
+      window.dispatchEvent(
+        new CustomEvent("collabry:match-role-changed", {
+          detail: { role: creator ? "creator" : "brand" },
+        })
+      );
     });
   });
 
@@ -161,13 +162,6 @@ function setupMatching() {
     document.querySelector(`[data-match-role="${selectedRole}"]`)?.click();
   }
 
-  document.querySelectorAll(".match-action").forEach((button) => {
-    button.addEventListener("click", () => {
-      button.textContent = "已送出合作興趣 ✓";
-      button.classList.add("matched");
-      button.disabled = true;
-    });
-  });
 }
 
 function setupProfile() {

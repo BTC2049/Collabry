@@ -11,6 +11,27 @@
   align-items: end;
   gap: 30px;
 }
+.profile-heading-actions { display: grid; justify-items: end; gap: 12px; }
+.profile-type-switch {
+  padding: 5px;
+  display: flex;
+  gap: 5px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(17,29,42,.06);
+}
+.profile-type-switch a {
+  min-height: 40px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.profile-type-switch a.active { background: var(--ink); color: white; }
+.profile-type-switch a:not(.active):hover { color: var(--orange); }
 .profile-page-heading h1 {
   margin: 0;
   font-size: clamp(38px, 4vw, 58px);
@@ -119,6 +140,9 @@
 @media (max-width: 580px) {
   .profile-shell { padding: 32px 18px 70px; }
   .profile-page-heading { align-items: flex-start; flex-direction: column; }
+  .profile-heading-actions { width: 100%; justify-items: stretch; }
+  .profile-type-switch { width: 100%; }
+  .profile-type-switch a { flex: 1; justify-content: center; }
   .profile-page-heading h1 { font-size: 36px; letter-spacing: -1.4px; }
   .editor-grid { grid-template-columns: 1fr; }
   .editor-field.full { grid-column: auto; }

@@ -30,7 +30,13 @@
           <h1>編輯我的創作者頁</h1>
           <p>資料越完整，品牌越容易理解你的風格與合作價值。</p>
         </div>
-        <span class="save-status" id="save-status">已儲存變更 ✓</span>
+        <div class="profile-heading-actions">
+          <div class="profile-type-switch" aria-label="選擇要編輯的個人頁">
+            <a class="active" href="creator-profile.html">創作者頁</a>
+            <a href="brand-profile.html">品牌頁</a>
+          </div>
+          <span class="save-status" id="save-status">已儲存變更 ✓</span>
+        </div>
       </section>
 
       <div class="profile-layout">
@@ -40,7 +46,7 @@
             <span class="avatar-edit">更換頭像</span>
           </label>
           <input class="avatar-input" id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp">
-          <small class="avatar-help">JPG、PNG 或 WebP，最大 5 MB</small>
+          <small class="avatar-help">自動壓縮為 WebP，儲存檔約 250 KB 以下</small>
           <span class="profile-role">Creator profile</span>
           <h2 data-preview="displayName">你的創作者名稱</h2>
           <p class="profile-bio-preview" data-preview="bio">在這裡介紹你的內容風格、受眾與特色。</p>

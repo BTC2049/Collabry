@@ -61,6 +61,7 @@ function addAccountMenu(user, supabase) {
       </div>
       <a href="${profileHref}">編輯我的個人頁 <span>↗</span></a>
       <a href="matching.html?role=${role}">查看我的媒合 <span>↗</span></a>
+      <a href="requests.html">合作邀請 <span class="request-count" data-request-count></span></a>
       <button class="account-signout" type="button">登出</button>
     </div>`;
   const trigger = account.querySelector(".account-trigger");
@@ -91,6 +92,20 @@ function addAccountMenu(user, supabase) {
   }
 }
 
+async function addRequestCount(supabase) {
+  const { count } = await supabase
+    .from("collaboration_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending")
+    .eq("receiver_id", (await supabase.auth.getUser()).data.user?.id);
+  document.querySelectorAll("[data-request-count]").forEach((badge) => {
+    if (count) {
+      badge.textContent = String(count);
+      badge.classList.add("show");
+    }
+  });
+}
+
 function renderAdminLinks() {
   const dropdown = document.querySelector(".account-dropdown");
   if (dropdown && !dropdown.querySelector("[data-admin-link]")) {
@@ -106,7 +121,7 @@ function renderAdminLinks() {
     const menuAdmin = document.createElement("a");
     menuAdmin.href = "admin.html";
     menuAdmin.dataset.adminLink = "";
-    menuAdmin.innerHTML = "<span>06</span>管理後台";
+    menuAdmin.innerHTML = "<span>07</span>管理後台";
     menuLinks.appendChild(menuAdmin);
   }
 }
@@ -163,6 +178,48 @@ function renderSignedInPanel(user) {
   form.prepend(panel);
 }
 
+function canvasToBlob(canvas, quality) {
+  return new Promise((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+}
+
+async function compressAvatar(file) {
+  const bitmap = await createImageBitmap(file);
+  let maxEdge = 512;
+  let blob;
+
+  while (maxEdge >= 320) {
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext("2d", { alpha: true }).drawImage(bitmap, 0, 0, width, height);
+
+    let quality = 0.84;
+    blob = await canvasToBlob(canvas, quality);
+    while (blob && blob.size > 250 * 1024 && quality > 0.36) {
+      quality -= 0.08;
+      blob = await canvasToBlob(canvas, quality);
+    }
+    if (blob && blob.size <= 250 * 1024) break;
+    maxEdge -= 64;
+  }
+  bitmap.close();
+  if (!blob) throw new Error("瀏覽器無法處理這張圖片");
+  if (blob.size > 384000) throw new Error("圖片壓縮後仍然過大，請改用較簡單的圖片");
+  return new File([blob], "avatar.webp", { type: "image/webp" });
+}
+
+function updateAccountAvatar(url) {
+  const trigger = document.querySelector(".account-trigger");
+  if (!trigger || !url) return;
+  const cacheSafeUrl = `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`;
+  trigger.innerHTML = `<img src="${cacheSafeUrl}" alt="">`;
+  const signedAvatar = document.querySelector(".signed-user-avatar");
+  if (signedAvatar) signedAvatar.src = cacheSafeUrl;
+}
+
 async function setupAvatarUpload(supabase, user) {
   const input = document.querySelector("#avatar-upload");
   const preview = document.querySelector("[data-avatar-preview]");
@@ -176,12 +233,15 @@ async function setupAvatarUpload(supabase, user) {
 
   function showAvatar(url) {
     if (!url) return;
-    preview.style.backgroundImage = `url("${url}")`;
+    const cacheSafeUrl = `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`;
+    preview.style.backgroundImage = `url("${cacheSafeUrl}")`;
     preview.classList.add("has-image");
     preview.textContent = "";
   }
 
-  showAvatar(profile?.avatar_url || user.user_metadata?.avatar_url);
+  const initialAvatar = profile?.avatar_url || user.user_metadata?.avatar_url;
+  showAvatar(initialAvatar);
+  if (profile?.avatar_url) updateAccountAvatar(profile.avatar_url);
 
   input.addEventListener("change", async () => {
     const file = input.files?.[0];
@@ -191,20 +251,27 @@ async function setupAvatarUpload(supabase, user) {
       input.value = "";
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      showAuthMessage("圖片不可超過 5 MB。");
+    if (file.size > 10 * 1024 * 1024) {
+      showAuthMessage("原始圖片不可超過 10 MB。");
       input.value = "";
       return;
     }
 
-    showAvatar(URL.createObjectURL(file));
     const uploader = input.previousElementSibling;
     uploader?.classList.add("uploading");
-    const extension = file.name.split(".").pop().toLowerCase();
-    const path = `${user.id}/avatar-${Date.now()}.${extension}`;
+    let compressed;
+    try {
+      compressed = await compressAvatar(file);
+    } catch (error) {
+      uploader?.classList.remove("uploading");
+      showAuthMessage(`圖片處理失敗：${error.message}`);
+      return;
+    }
+    showAvatar(URL.createObjectURL(compressed));
+    const path = `${user.id}/avatar.webp`;
     const { error: uploadError } = await supabase.storage
       .from("avatars")
-      .upload(path, file, { cacheControl: "3600", upsert: true });
+      .upload(path, compressed, { cacheControl: "3600", upsert: true });
 
     if (uploadError) {
       uploader?.classList.remove("uploading");
@@ -225,7 +292,8 @@ async function setupAvatarUpload(supabase, user) {
       return;
     }
     showAvatar(avatarUrl);
-    showAuthMessage("頭像已更新。");
+    updateAccountAvatar(avatarUrl);
+    showAuthMessage(`頭像已更新（${Math.ceil(compressed.size / 1024)} KB）。`);
   });
 }
 
@@ -287,6 +355,7 @@ if (!configured) {
   if (session?.user) {
     syncUser(session.user);
     addAccountMenu(session.user, supabase);
+    addRequestCount(supabase);
     addAdminEntry(supabase, session.user);
     renderSignedInPanel(session.user);
     setupAvatarUpload(supabase, session.user);

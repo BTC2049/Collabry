@@ -17,12 +17,27 @@ function statusLabel(status) {
 function formatDate(date) {
   return new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium", timeStyle: "short" }).format(new Date(date));
 }
+function telegramHref(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (/^https?:\/\//i.test(text)) return text;
+  return `https://t.me/${text.replace(/^@/, "")}`;
+}
+function whatsappHref(value) {
+  const number = String(value || "").replace(/[^\d]/g, "");
+  return number ? `https://wa.me/${number}` : "";
+}
 function acceptedContact(request) {
   if (request.status !== "accepted") return "";
   const items = [];
   if (request.other_contact) items.push(`<span>聯絡人：${escapeHtml(request.other_contact)}</span>`);
   if (request.other_email) items.push(`<a href="mailto:${escapeHtml(request.other_email)}">合作 Email：${escapeHtml(request.other_email)}</a>`);
   if (request.other_line) items.push(`<span>LINE ID：${escapeHtml(request.other_line)}</span>`);
+  if (request.other_telegram) items.push(`<a href="${escapeHtml(telegramHref(request.other_telegram))}" target="_blank" rel="noopener">Telegram：${escapeHtml(request.other_telegram)}</a>`);
+  if (request.other_whatsapp) items.push(`<a href="${escapeHtml(whatsappHref(request.other_whatsapp))}" target="_blank" rel="noopener">WhatsApp：${escapeHtml(request.other_whatsapp)}</a>`);
+  if (request.other_discord) items.push(`<span>Discord：${escapeHtml(request.other_discord)}</span>`);
+  if (request.other_instagram) items.push(`<span>Instagram：${escapeHtml(request.other_instagram)}</span>`);
+  if (request.other_contact_extra) items.push(`<span>其他方式：${escapeHtml(request.other_contact_extra)}</span>`);
   return items.length
     ? `<div class="request-contact">${items.join("")}</div>`
     : `<div class="request-contact"><span>對方尚未在平台填寫聯絡資訊</span></div>`;

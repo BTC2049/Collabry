@@ -23,8 +23,9 @@
   color: #17684c;
   font-size: 12px;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
-.request-contact a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.request-contact a { width: fit-content; color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .request-actions { display: flex; gap: 8px; }
 .request-actions button { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: white; cursor: pointer; font-size: 11px; font-weight: 800; }
 .request-actions .accept { border-color: var(--orange); background: var(--orange); color: white; }

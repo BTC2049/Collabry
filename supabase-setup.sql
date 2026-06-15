@@ -266,7 +266,9 @@ as $$
     profile.id,
     profile.display_name,
     profile.role,
-    profile.profile_data - 'email' - 'line' - 'contact' - 'phone' - 'address',
+    profile.profile_data
+      - 'email' - 'line' - 'contact' - 'phone' - 'address'
+      - 'telegram' - 'whatsapp' - 'discord' - 'contactInstagram' - 'otherContact',
     profile.avatar_url,
     profile.profile_completed_at
   from public.profiles profile
@@ -343,7 +345,9 @@ as $$
     profile.id,
     profile.display_name,
     profile.role,
-    profile.profile_data - 'email' - 'line' - 'contact' - 'phone' - 'address',
+    profile.profile_data
+      - 'email' - 'line' - 'contact' - 'phone' - 'address'
+      - 'telegram' - 'whatsapp' - 'discord' - 'contactInstagram' - 'otherContact',
     profile.avatar_url,
     profile.is_published,
     profile.published_at
@@ -368,6 +372,11 @@ returns table (
   other_email text,
   other_line text,
   other_contact text,
+  other_telegram text,
+  other_whatsapp text,
+  other_discord text,
+  other_instagram text,
+  other_contact_extra text,
   message text,
   status text,
   created_at timestamptz,
@@ -387,6 +396,11 @@ as $$
     case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'email', '') else null end,
     case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'line', '') else null end,
     case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'contact', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'telegram', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'whatsapp', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'discord', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'contactInstagram', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'otherContact', '') else null end,
     request.message,
     request.status,
     request.created_at,

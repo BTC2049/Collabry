@@ -12,7 +12,18 @@ const json = (body: unknown, status = 200) =>
   });
 
 function sanitizeProfile(profile: Record<string, unknown>) {
-  const privateKeys = new Set(["email", "line", "contact", "phone", "address"]);
+  const privateKeys = new Set([
+    "email",
+    "line",
+    "contact",
+    "phone",
+    "address",
+    "telegram",
+    "whatsapp",
+    "discord",
+    "contactInstagram",
+    "otherContact",
+  ]);
   const profileData = Object.fromEntries(
     Object.entries((profile.profile_data as Record<string, unknown>) || {})
       .filter(([key, value]) => !privateKeys.has(key) && value !== "")

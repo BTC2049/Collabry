@@ -40,17 +40,32 @@
 }
 .profile-page-heading > div > p:not(.eyebrow) { margin: 14px 0 0; color: var(--muted); font-size: 14px; }
 .save-status {
-  padding: 10px 16px;
-  border-radius: 999px;
+  position: fixed;
+  z-index: 100;
+  right: 26px;
+  bottom: 26px;
+  max-width: 330px;
+  padding: 13px 18px;
+  border-radius: 13px;
   background: #dff6ed;
   color: #17684c;
   opacity: 0;
-  transform: translateY(6px);
+  pointer-events: none;
+  transform: translateY(14px);
   transition: .25s;
-  font-size: 11px;
+  box-shadow: 0 16px 45px rgba(17,29,42,.18);
+  font-size: 12px;
   font-weight: 800;
 }
 .save-status.show { opacity: 1; transform: translateY(0); }
+.save-status.saving { background: #fff4d8; color: #80651c; }
+.save-status.success { background: #dff6ed; color: #17684c; }
+.save-status.error {
+  border-radius: 12px;
+  background: #ffe5de;
+  color: #a83220;
+  line-height: 1.45;
+}
 .profile-layout {
   display: grid;
   grid-template-columns: 310px minmax(0, 1fr);
@@ -131,6 +146,7 @@
 }
 .editor-field small { color: #92999f; font-size: 10px; }
 .profile-actions { padding-top: 26px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--line); }
+.profile-actions button:disabled { opacity: .62; cursor: wait; transform: none; }
 
 @media (max-width: 850px) {
   .profile-shell { padding-top: 40px; }
@@ -150,4 +166,11 @@
   .profile-editor, .profile-preview { border-radius: 18px; }
   .profile-editor, .profile-preview { padding: 22px; }
   .profile-actions .button { width: 100%; }
+  .save-status {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    max-width: none;
+    text-align: center;
+  }
 }

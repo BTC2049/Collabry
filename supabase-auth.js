@@ -389,6 +389,11 @@ if (!configured) {
     } = await supabase.auth.getUser();
     if (!user) {
       showAuthMessage("請先登入後再儲存個人頁。");
+      window.dispatchEvent(
+        new CustomEvent("collabry:profile-save-result", {
+          detail: { success: false, message: "請先登入" },
+        })
+      );
       return;
     }
 
@@ -408,6 +413,19 @@ if (!configured) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.id);
-    if (error) showAuthMessage(`雲端儲存失敗：${error.message}`);
+    if (error) {
+      showAuthMessage(`雲端儲存失敗：${error.message}`);
+      window.dispatchEvent(
+        new CustomEvent("collabry:profile-save-result", {
+          detail: { success: false, message: error.message },
+        })
+      );
+      return;
+    }
+    window.dispatchEvent(
+      new CustomEvent("collabry:profile-save-result", {
+        detail: { success: true },
+      })
+    );
   });
 }

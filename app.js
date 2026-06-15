@@ -197,16 +197,34 @@ function setupProfile() {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
     localStorage.setItem(storageKey, JSON.stringify(data));
+    const status = document.querySelector("#save-status");
+    const submitButton = form.querySelector('button[type="submit"]');
+    status.textContent = "儲存中...";
+    status.className = "save-status saving show";
+    submitButton.disabled = true;
+    submitButton.dataset.originalText ||= submitButton.textContent;
+    submitButton.textContent = "儲存中...";
     window.dispatchEvent(
       new CustomEvent("collabry:profile-saved", {
         detail: { role, profile: data },
       })
     );
-    const status = document.querySelector("#save-status");
-    status.textContent = "已儲存變更 ✓";
-    status.classList.add("show");
-    window.setTimeout(() => status.classList.remove("show"), 2400);
     updatePreview();
+  });
+
+  window.addEventListener("collabry:profile-save-result", (event) => {
+    const status = document.querySelector("#save-status");
+    const submitButton = form.querySelector('button[type="submit"]');
+    const success = event.detail.success;
+    status.textContent = success
+      ? "已儲存至雲端 ✓"
+      : `儲存失敗：${event.detail.message || "請稍後再試"}`;
+    status.className = `save-status ${success ? "success" : "error"} show`;
+    submitButton.disabled = false;
+    submitButton.textContent = submitButton.dataset.originalText;
+    if (success) {
+      window.setTimeout(() => status.classList.remove("show"), 4200);
+    }
   });
 
   document.querySelector("#view-public-profile")?.addEventListener("click", () => {

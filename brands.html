@@ -29,7 +29,7 @@
           <h1>找到欣賞你內容的<br><em>下一個品牌。</em></h1>
           <p>清楚看到合作內容、預算範圍與品牌期待。只把時間花在真正適合的機會上。</p>
         </div>
-        <div class="directory-stat"><strong>94</strong><span>個開放合作品牌</span></div>
+        <div class="directory-stat"><strong>0</strong><span>個已發布品牌</span></div>
       </section>
 
       <section class="directory-main">
@@ -40,11 +40,27 @@
             <button class="filter-chip" data-filter="lifestyle">生活選物</button>
             <button class="filter-chip" data-filter="food">食品飲品</button>
             <button class="filter-chip" data-filter="parenting">親子家庭</button>
+            <button class="filter-chip" data-filter="fashion">時尚穿搭</button>
+            <button class="filter-chip" data-filter="travel">旅遊住宿</button>
+            <button class="filter-chip" data-filter="health">健康運動</button>
+            <button class="filter-chip" data-filter="tech">3C 科技</button>
+            <button class="filter-chip" data-filter="finance">財經投資</button>
+            <button class="filter-chip" data-filter="crypto">加密貨幣</button>
+            <button class="filter-chip" data-filter="gaming">遊戲電競</button>
+            <button class="filter-chip" data-filter="pet">寵物</button>
+            <button class="filter-chip" data-filter="education">教育知識</button>
+            <button class="filter-chip" data-filter="auto">汽車交通</button>
+            <button class="filter-chip" data-filter="entertainment">藝文娛樂</button>
+            <button class="filter-chip" data-filter="business">商業服務</button>
+            <button class="filter-chip" data-filter="other">其他</button>
           </div>
-          <span class="result-count">依近期合作需求排序</span>
+          <div class="directory-tools">
+            <input class="directory-search" type="search" placeholder="搜尋品牌、產業或合作方式">
+            <span class="result-count">依發布時間排序</span>
+          </div>
         </div>
 
-        <div class="profile-grid">
+        <div class="profile-grid" id="published-directory">
           <article class="profile-card" data-category="beauty">
             <div class="profile-cover cover-mint"><button class="save-button" aria-label="收藏">♡</button><span class="avatar-letter brand-logo-shape">M</span></div>
             <div class="profile-info">
@@ -120,5 +136,6 @@
       </section>
     </main>
     <script src="app.js"></script>
+    <script type="module" src="directory-data.js"></script>
   </body>
 </html>

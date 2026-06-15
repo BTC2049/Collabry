@@ -297,6 +297,17 @@ async function setupAvatarUpload(supabase, user) {
   });
 }
 
+function updatePublishUI(published) {
+  const state = document.querySelector("#publish-state");
+  const publishButton = document.querySelector("#publish-profile");
+  const unpublishButton = document.querySelector("#unpublish-profile");
+  if (!state || !publishButton || !unpublishButton) return;
+  state.classList.toggle("published", published);
+  state.querySelector("strong").textContent = published ? "公開中" : "尚未發布";
+  publishButton.textContent = published ? "更新並重新發布" : publishButton.dataset.label;
+  unpublishButton.hidden = !published;
+}
+
 if (!configured) {
   googleButton?.addEventListener("click", () => {
     showAuthMessage("尚未填入 Supabase 專案網址與 Publishable Key。");
@@ -359,6 +370,14 @@ if (!configured) {
     addAdminEntry(supabase, session.user);
     renderSignedInPanel(session.user);
     setupAvatarUpload(supabase, session.user);
+    const { data: profileState } = await supabase
+      .from("profiles")
+      .select("is_published")
+      .eq("id", session.user.id)
+      .maybeSingle();
+    const publishButton = document.querySelector("#publish-profile");
+    if (publishButton) publishButton.dataset.label = publishButton.textContent;
+    updatePublishUI(Boolean(profileState?.is_published));
     const emailInput = document.querySelector('#profile-form input[name="email"]');
     if (emailInput && !emailInput.value) {
       emailInput.value = session.user.email || "";
@@ -427,5 +446,27 @@ if (!configured) {
         detail: { success: true },
       })
     );
+  });
+
+  window.addEventListener("collabry:profile-publish", async (event) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const published = Boolean(event.detail.published);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        is_published: published,
+        published_at: published ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+    if (error) {
+      showAuthMessage(`${published ? "發布" : "下架"}失敗：${error.message}`);
+      return;
+    }
+    updatePublishUI(published);
+    showAuthMessage(published ? "個人頁已公開發布。" : "個人頁已下架。");
   });
 }

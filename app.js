@@ -228,7 +228,32 @@ function setupProfile() {
   });
 
   document.querySelector("#view-public-profile")?.addEventListener("click", () => {
-    window.location.href = role === "brand" ? "brands.html" : "creators.html";
+    window.location.href = `public-profile.html?preview=mine&role=${role}`;
+  });
+
+  document.querySelector("#publish-profile")?.addEventListener("click", () => {
+    window.addEventListener(
+      "collabry:profile-save-result",
+      (event) => {
+        if (event.detail.success) {
+          window.dispatchEvent(
+            new CustomEvent("collabry:profile-publish", {
+              detail: { published: true },
+            })
+          );
+        }
+      },
+      { once: true }
+    );
+    form.requestSubmit();
+  });
+
+  document.querySelector("#unpublish-profile")?.addEventListener("click", () => {
+    window.dispatchEvent(
+      new CustomEvent("collabry:profile-publish", {
+        detail: { published: false },
+      })
+    );
   });
 
   updatePreview();

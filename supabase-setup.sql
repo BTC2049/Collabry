@@ -8,6 +8,8 @@ create table if not exists public.profiles (
   role text not null default 'creator' check (role in ('creator', 'brand')),
   profile_data jsonb not null default '{}'::jsonb,
   avatar_url text,
+  is_published boolean not null default false,
+  published_at timestamptz,
   profile_completed_at timestamptz,
   is_admin boolean not null default false,
   created_at timestamptz not null default now(),
@@ -16,6 +18,10 @@ create table if not exists public.profiles (
 
 alter table public.profiles
 add column if not exists avatar_url text;
+alter table public.profiles
+add column if not exists is_published boolean not null default false;
+alter table public.profiles
+add column if not exists published_at timestamptz;
 
 alter table public.profiles enable row level security;
 
@@ -95,6 +101,8 @@ grant update (
   role,
   profile_data,
   avatar_url,
+  is_published,
+  published_at,
   profile_completed_at,
   updated_at
 ) on public.profiles to authenticated;
@@ -195,7 +203,7 @@ as $$
     join public.profiles receiver on receiver.id = target_id
     where sender.id = auth.uid()
       and receiver.id <> sender.id
-      and receiver.profile_completed_at is not null
+      and receiver.is_published = true
       and sender.role <> receiver.role
   );
 $$;
@@ -258,12 +266,45 @@ as $$
   where auth.uid() is not null
     and profile.id <> auth.uid()
     and profile.role = requested_role
-    and profile.profile_completed_at is not null
+    and profile.is_published = true
   order by profile.updated_at desc;
 $$;
 
 revoke all on function public.get_match_profiles(text) from public;
 grant execute on function public.get_match_profiles(text) to authenticated;
+
+-- Public directories expose published content but remove private contact fields.
+create or replace function public.get_published_profiles(requested_role text)
+returns table (
+  id uuid,
+  display_name text,
+  role text,
+  profile_data jsonb,
+  avatar_url text,
+  is_published boolean,
+  published_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    profile.id,
+    profile.display_name,
+    profile.role,
+    profile.profile_data - 'email' - 'line' - 'contact',
+    profile.avatar_url,
+    profile.is_published,
+    profile.published_at
+  from public.profiles profile
+  where profile.role = requested_role
+    and profile.is_published = true
+  order by profile.published_at desc nulls last;
+$$;
+
+revoke all on function public.get_published_profiles(text) from public;
+grant execute on function public.get_published_profiles(text) to anon, authenticated;
 
 -- Return both inbox and sent requests with the other party's public identity.
 create or replace function public.get_my_collaboration_requests()

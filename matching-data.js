@@ -13,6 +13,7 @@ let currentRole =
   new URLSearchParams(window.location.search).get("role") ||
   localStorage.getItem("collabry-role") ||
   "brand";
+const requestedTarget = new URLSearchParams(window.location.search).get("target");
 let profiles = [];
 
 function escapeHtml(value = "") {
@@ -150,6 +151,11 @@ async function loadProfiles() {
     return;
   }
   profiles = data || [];
+  if (requestedTarget) {
+    profiles.sort((left, right) =>
+      left.id === requestedTarget ? -1 : right.id === requestedTarget ? 1 : 0
+    );
+  }
   render();
 }
 

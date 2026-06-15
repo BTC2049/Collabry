@@ -61,6 +61,10 @@
         </aside>
 
         <form class="profile-editor" id="profile-form" data-role="creator">
+          <div class="publish-guide">
+            <span>發布流程</span>
+            <p><strong>先儲存草稿</strong>，確認預覽後再按「發布創作者頁」。發布後才會出現在創作者分類與智慧媒合中。</p>
+          </div>
           <section class="editor-section">
             <h2>公開資料</h2>
             <p>這些內容會出現在品牌搜尋與媒合結果中。</p>
@@ -79,7 +83,15 @@
               </div>
               <div class="editor-field">
                 <label for="category">主要內容領域</label>
-                <input id="category" name="category" placeholder="例如：生活風格、美妝保養" data-completion>
+                <input id="category" name="category" list="creator-category-options" placeholder="搜尋或自行輸入內容領域" data-completion>
+                <datalist id="creator-category-options">
+                  <option value="生活風格"><option value="美妝保養"><option value="美食料理">
+                  <option value="親子育兒"><option value="時尚穿搭"><option value="旅遊住宿">
+                  <option value="健康運動"><option value="3C 科技"><option value="財經投資">
+                  <option value="加密貨幣／Web3"><option value="遊戲電競"><option value="寵物">
+                  <option value="教育知識"><option value="攝影影像"><option value="音樂表演">
+                  <option value="汽車交通"><option value="職場商業"><option value="藝文娛樂">
+                </datalist>
               </div>
               <div class="editor-field">
                 <label for="language">內容語言</label>
@@ -153,8 +165,11 @@
           </section>
 
           <div class="profile-actions">
-            <button class="button button-ghost" id="view-public-profile" type="button">查看公開頁面</button>
-            <button class="button button-primary" type="submit">儲存個人頁</button>
+            <div class="publish-state" id="publish-state"><span></span><strong>尚未發布</strong></div>
+            <button class="button button-ghost" id="view-public-profile" type="button">預覽公開頁</button>
+            <button class="button button-ghost unpublish-button" id="unpublish-profile" type="button" hidden>下架</button>
+            <button class="button button-dark" type="submit">儲存草稿</button>
+            <button class="button button-primary" id="publish-profile" type="button">發布創作者頁</button>
           </div>
         </form>
       </div>

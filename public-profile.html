@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="查看 Collabry 公開合作檔案。">
+    <title>公開合作頁｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="public-profile.css">
+  </head>
+  <body class="public-profile-body" data-page="public-profile">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-mark.svg" alt="" width="34" height="34">
+        <span>Collabry</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a href="creators.html">探索創作者</a>
+        <a href="brands.html">探索品牌</a>
+        <a href="matching.html">智慧媒合</a>
+      </nav>
+    </header>
+
+    <main class="public-profile-shell">
+      <div class="public-profile-loading" id="public-profile-loading">
+        <strong>正在讀取公開檔案...</strong>
+        <p>稍候一下，我們正在整理合作資訊。</p>
+      </div>
+      <article class="public-profile-card" id="public-profile-card" hidden>
+        <aside class="public-profile-identity">
+          <div class="public-avatar" id="public-avatar"></div>
+          <span class="public-role" id="public-role"></span>
+          <h1 id="public-name"></h1>
+          <p id="public-bio"></p>
+          <div class="public-status"><span></span>公開合作中</div>
+        </aside>
+        <section class="public-profile-content">
+          <div class="public-profile-topline">
+            <div>
+              <p class="eyebrow" id="public-eyebrow"></p>
+              <h2 id="public-heading"></h2>
+            </div>
+            <a class="button button-ghost" id="back-directory" href="brands.html">返回探索</a>
+          </div>
+          <div class="public-facts" id="public-facts"></div>
+          <section class="public-story" id="public-story"></section>
+          <div class="public-links" id="public-links"></div>
+          <div class="public-cta">
+            <div>
+              <strong>覺得彼此適合？</strong>
+              <p>進入智慧媒合並送出合作興趣，對方會在站內收到通知。</p>
+            </div>
+            <a class="button button-primary" id="public-match-link" href="matching.html">送出合作興趣</a>
+          </div>
+        </section>
+      </article>
+    </main>
+    <script src="app.js"></script>
+    <script type="module" src="supabase-auth.js"></script>
+    <script type="module" src="public-profile.js"></script>
+  </body>
+</html>

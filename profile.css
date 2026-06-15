@@ -122,6 +122,20 @@
 .completion-track { height: 7px; margin-top: 11px; overflow: hidden; border-radius: 99px; background: #ddd8ce; }
 .completion-track i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--orange); transition: width .3s; }
 .profile-editor { padding: clamp(25px, 4vw, 42px); }
+.publish-guide {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+  border: 1px solid #f3c5b9;
+  border-radius: 15px;
+  background: #fff4f0;
+}
+.publish-guide > span { padding: 5px 8px; border-radius: 6px; background: var(--orange); color: white; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.publish-guide p { margin: 1px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.publish-guide strong { color: var(--ink); }
 .editor-section { padding: 32px 0; border-top: 1px solid var(--line); }
 .editor-section:first-child { padding-top: 0; border-top: 0; }
 .editor-section h2 { margin: 0 0 7px; font-size: 21px; letter-spacing: -.4px; }
@@ -145,7 +159,12 @@
   box-shadow: 0 0 0 3px rgba(255,95,61,.11);
 }
 .editor-field small { color: #92999f; font-size: 10px; }
-.profile-actions { padding-top: 26px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--line); }
+.profile-actions { padding-top: 26px; display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--line); }
+.publish-state { margin-right: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
+.publish-state span { width: 9px; height: 9px; border-radius: 50%; background: #b8bdc1; }
+.publish-state.published { color: #17684c; }
+.publish-state.published span { background: #22a879; box-shadow: 0 0 0 5px rgba(34,168,121,.11); }
+.unpublish-button { color: #a83220; border-color: #d8aaa2; }
 .profile-actions button:disabled { opacity: .62; cursor: wait; transform: none; }
 
 @media (max-width: 850px) {
@@ -166,6 +185,7 @@
   .profile-editor, .profile-preview { border-radius: 18px; }
   .profile-editor, .profile-preview { padding: 22px; }
   .profile-actions .button { width: 100%; }
+  .publish-guide { grid-template-columns: 1fr; }
   .save-status {
     right: 16px;
     bottom: 16px;

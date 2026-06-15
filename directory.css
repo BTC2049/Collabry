@@ -48,6 +48,18 @@
 }
 .filter-chip.active, .filter-chip:hover { background: var(--ink); color: white; border-color: var(--ink); }
 .result-count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.directory-tools { display: flex; align-items: center; gap: 14px; }
+.directory-search {
+  width: min(260px, 30vw);
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+  outline: none;
+  font-size: 12px;
+}
+.directory-search:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,95,61,.1); }
 .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .profile-card {
   min-width: 0;
@@ -124,6 +136,24 @@
 .profile-numbers small { margin-top: 4px; color: var(--muted); font-size: 10px; }
 .profile-link { margin-top: 19px; display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; }
 .profile-link span { color: var(--orange); }
+.directory-avatar {
+  background-position: center;
+  background-size: cover;
+  transform: none;
+}
+.directory-empty {
+  grid-column: 1 / -1;
+  min-height: 280px;
+  padding: 40px;
+  display: grid;
+  place-content: center;
+  border: 1px dashed var(--line);
+  border-radius: 22px;
+  background: rgba(255,255,255,.55);
+  text-align: center;
+}
+.directory-empty strong { font-size: 20px; }
+.directory-empty p { color: var(--muted); font-size: 13px; }
 
 .matching-body { background: #f6f2e9; }
 .matching-shell { min-height: calc(100vh - 78px); padding: 52px clamp(22px, 6vw, 90px) 100px; }
@@ -333,6 +363,17 @@ body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
 @media (max-width: 620px) {
   .directory-header { min-height: 420px; grid-template-columns: 1fr; align-items: end; }
   .directory-toolbar { align-items: flex-start; flex-direction: column; }
+  .directory-tools { width: 100%; align-items: flex-start; flex-direction: column; }
+  .directory-search { width: 100%; }
+  .filter-row {
+    width: calc(100vw - 36px);
+    padding-bottom: 7px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip { flex: 0 0 auto; }
   .matching-intro { grid-template-columns: 1fr; align-items: start; }
   .matching-intro > div:first-child { grid-column: auto; }
   .profile-grid { grid-template-columns: 1fr; }

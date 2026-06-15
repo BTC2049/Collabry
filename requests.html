@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>合作邀請｜Collabry</title>
+    <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="directory.css">
+    <link rel="stylesheet" href="requests.css">
+  </head>
+  <body class="requests-body" data-page="requests">
+    <header class="site-header">
+      <a class="brand" href="index.html"><img src="assets/logo-mark.svg" alt="" width="34" height="34"><span>Collabry</span></a>
+      <nav><a href="matching.html">智慧媒合</a><a href="requests.html">合作邀請</a></nav>
+    </header>
+    <main class="requests-shell">
+      <section class="requests-heading">
+        <div><p class="eyebrow">COLLABORATION INBOX</p><h1>合作邀請</h1><p>查看收到與送出的合作邀請，掌握每一筆合作進度。</p></div>
+        <div class="request-tabs"><button class="active" data-request-tab="received">收到的</button><button data-request-tab="sent">送出的</button></div>
+      </section>
+      <section class="request-list" id="request-list">
+        <div class="match-loading"><span></span><p>正在讀取邀請...</p></div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+    <script type="module" src="supabase-auth.js"></script>
+    <script type="module" src="requests.js"></script>
+  </body>
+</html>

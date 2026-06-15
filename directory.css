@@ -269,6 +269,7 @@
   gap: 6px;
   box-shadow: 0 8px 25px rgba(17,29,42,.08);
 }
+body:has(.account-control) .menu-toggle { right: clamp(18px, 3vw, 42px); }
 .menu-toggle span { display: block; width: 20px; height: 2px; background: var(--ink); transition: .25s; }
 .menu-toggle span:last-child { width: 13px; justify-self: end; }
 .menu-backdrop { position: fixed; z-index: 70; inset: 0; background: rgba(17,29,42,.55); opacity: 0; pointer-events: none; transition: opacity .3s; backdrop-filter: blur(4px); }

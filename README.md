@@ -35,8 +35,8 @@
    - Authorized JavaScript origins：加入 GitHub Pages 網站的 origin，例如 `https://username.github.io`
    - Authorized redirect URI：填入 Supabase Google Provider 頁顯示的 callback URL。
 4. 到 Supabase Authentication > URL Configuration：
-   - Site URL：填完整 GitHub Pages 網址。
-   - Redirect URLs：加入完整網站網址及 `/**`。
+   - Site URL：`https://btc2049.github.io/Collabry/`
+   - Redirect URLs：加入 `https://btc2049.github.io/Collabry/**`
 5. 到 Project Settings > Data API 複製 Project URL 與 Publishable Key，填入 `supabase-config.js`。
 
 Google OAuth 無法在 `file://` 網址執行。登入成功後會依使用者選擇的身分，導向品牌或創作者個人頁。

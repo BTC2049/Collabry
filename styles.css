@@ -82,6 +82,16 @@ nav a:hover { color: var(--orange); }
 .eyebrow span { display: inline-block; width: 22px; height: 2px; background: currentColor; vertical-align: middle; margin-right: 8px; }
 h1 { margin: 0; font-size: clamp(56px, 6vw, 88px); line-height: .99; letter-spacing: -5px; font-weight: 800; }
 h1 em { color: var(--orange); font-style: normal; }
+.hero-title {
+  width: min(760px, 100%);
+  font-size: clamp(58px, 5.2vw, 82px);
+  line-height: 1.08;
+  letter-spacing: -4px;
+}
+.hero-title span, .hero-title em {
+  display: block;
+  white-space: nowrap;
+}
 .hero-lead { max-width: 560px; margin: 30px 0 32px; color: var(--muted); font-size: 18px; line-height: 1.85; }
 .hero-actions { display: flex; align-items: center; gap: 30px; }
 .text-link { font-size: 14px; font-weight: 700; }
@@ -207,23 +217,70 @@ h1 em { color: var(--orange); font-style: normal; }
   background-position: 5px center !important;
   background-size: 30px 30px !important;
 }
-.account-menu {
-  margin-left: auto;
+.account-control {
+  position: fixed;
+  z-index: 65;
+  top: 18px;
+  right: clamp(74px, 7vw, 105px);
+}
+.account-trigger {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 7px 20px rgba(17,29,42,.16);
+  font-weight: 800;
+}
+.account-trigger img { width: 100%; height: 100%; object-fit: cover; }
+.account-dropdown {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 230px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 20px 55px rgba(17,29,42,.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-7px);
+  transition: .2s;
+}
+.account-control.open .account-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.account-identity { padding: 10px 10px 13px; border-bottom: 1px solid var(--line); }
+.account-identity strong, .account-identity small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-identity strong { font-size: 13px; }
+.account-identity small { margin-top: 4px; color: var(--muted); font-size: 9px; }
+.account-dropdown a, .account-signout {
+  width: 100%;
+  min-height: 39px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
-  gap: 9px;
+  justify-content: space-between;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
   font-size: 11px;
   font-weight: 700;
+  text-align: left;
 }
-.account-menu img { width: 30px; height: 30px; border-radius: 50%; }
-.account-menu button {
-  padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 10px;
-}
+.account-dropdown a:hover, .account-signout:hover { background: var(--cream); }
+.account-signout { margin-top: 3px; color: #b43c28; }
 .terms { display: block; margin-top: 14px; text-align: center; color: #9aa1a8; font-size: 9px; }
 
 footer { padding: 42px clamp(22px, 5vw, 76px); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
@@ -245,6 +302,7 @@ dialog > p:not(.eyebrow) { color: var(--muted); line-height: 1.7; }
   nav { display: none; }
   .hero { grid-template-columns: 1fr; padding-top: 55px; }
   .hero-copy { max-width: 650px; }
+  .hero-title { font-size: clamp(54px, 8vw, 76px); }
   .hero-visual { max-width: 580px; }
   .section-heading { display: block; }
   .steps { grid-template-columns: 1fr; }
@@ -254,8 +312,27 @@ dialog > p:not(.eyebrow) { color: var(--muted); line-height: 1.7; }
 }
 @media (max-width: 560px) {
   .site-header { height: 68px; }
-  .button-small { display: none; }
+  .button-small[data-open-auth] {
+    position: fixed;
+    z-index: 65;
+    top: 15px;
+    right: 72px;
+    min-width: 58px;
+    min-height: 38px;
+    padding: 0 13px;
+    display: inline-flex;
+    background: var(--paper);
+  }
+  .account-control { top: 13px; right: 70px; }
+  .account-trigger { width: 40px; height: 40px; }
+  .account-dropdown { position: fixed; top: 62px; right: 14px; width: min(260px, calc(100vw - 28px)); }
   h1 { font-size: 50px; letter-spacing: -3px; }
+  .hero-title {
+    font-size: clamp(42px, 12vw, 57px);
+    line-height: 1.1;
+    letter-spacing: -2.5px;
+  }
+  .hero-title span, .hero-title em { white-space: normal; }
   .hero { min-height: auto; padding-bottom: 55px; }
   .hero-actions { align-items: flex-start; flex-direction: column; gap: 20px; }
   .match-float { left: 0; bottom: 5%; }

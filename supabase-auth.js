@@ -39,21 +39,56 @@ function profileForRole() {
 
 function addAccountMenu(user, supabase) {
   const header = document.querySelector(".site-header");
-  if (!header || header.querySelector(".account-menu")) return;
+  if (!header || header.querySelector(".account-trigger")) return;
 
   const metadata = user.user_metadata || {};
+  const role = localStorage.getItem("collabry-role") || "creator";
+  const profileHref =
+    role === "brand" ? "brand-profile.html" : "creator-profile.html";
+  const existingLogin = header.querySelector("[data-open-auth]");
+  existingLogin?.remove();
+
   const account = document.createElement("div");
-  account.className = "account-menu";
+  account.className = "account-control";
   account.innerHTML = `
-    ${metadata.avatar_url ? `<img src="${metadata.avatar_url}" alt="">` : ""}
-    <span>${metadata.full_name || user.email}</span>
-    <button type="button">登出</button>`;
-  account.querySelector("button").addEventListener("click", async () => {
+    <button class="account-trigger" type="button" aria-label="開啟帳號選單" aria-expanded="false">
+      ${metadata.avatar_url ? `<img src="${metadata.avatar_url}" alt="">` : `<span>${(metadata.full_name || user.email || "U").slice(0, 1).toUpperCase()}</span>`}
+    </button>
+    <div class="account-dropdown" aria-hidden="true">
+      <div class="account-identity">
+        <strong>${metadata.full_name || "Collabry 使用者"}</strong>
+        <small>${user.email || ""}</small>
+      </div>
+      <a href="${profileHref}">編輯我的個人頁 <span>↗</span></a>
+      <a href="matching.html?role=${role}">查看我的媒合 <span>↗</span></a>
+      <button class="account-signout" type="button">登出</button>
+    </div>`;
+  const trigger = account.querySelector(".account-trigger");
+  const dropdown = account.querySelector(".account-dropdown");
+  trigger.addEventListener("click", () => {
+    const open = account.classList.toggle("open");
+    trigger.setAttribute("aria-expanded", String(open));
+    dropdown.setAttribute("aria-hidden", String(!open));
+  });
+  account.querySelector(".account-signout").addEventListener("click", async () => {
     await supabase.auth.signOut();
     localStorage.removeItem("collabry-user");
     window.location.href = "index.html";
   });
-  header.appendChild(account);
+  document.addEventListener("click", (event) => {
+    if (!account.contains(event.target)) {
+      account.classList.remove("open");
+      trigger.setAttribute("aria-expanded", "false");
+      dropdown.setAttribute("aria-hidden", "true");
+    }
+  });
+
+  const menuToggle = document.querySelector(".menu-toggle");
+  if (menuToggle) {
+    menuToggle.before(account);
+  } else {
+    header.appendChild(account);
+  }
 }
 
 function syncUser(user) {

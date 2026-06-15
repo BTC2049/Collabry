@@ -29,7 +29,9 @@ function createMenu() {
         <a href="${profileHref}" ${page.includes("profile") ? 'class="active"' : ""}><span>06</span>我的個人頁</a>
       </nav>
       <div class="menu-cta">
+        <span>SMART MATCHING</span>
         <p>準備找到下一個好合作？</p>
+        <small>用條件快速篩選適合的品牌與創作者。</small>
         <a class="button button-primary button-full" href="matching.html">開始媒合 <span>↗</span></a>
       </div>
     </aside>`;
@@ -381,6 +383,22 @@ function setupSearchableFields() {
   });
 }
 
+function createFooter() {
+  if (document.querySelector(".site-footer")) return;
+  if (!["home", "creators", "brands", "matching", "public-profile"].includes(page)) return;
+  const footer = document.createElement("footer");
+  footer.className = "site-footer";
+  footer.innerHTML = `
+    <a class="brand" href="index.html" aria-label="Collabry 首頁">
+      <img src="assets/logo-mark.svg" alt="" width="30" height="30">
+      <span>Collabry</span>
+    </a>
+    <p>讓每一次合作，都從適合開始。</p>
+    <p>© 2026 Collabry</p>`;
+  document.body.appendChild(footer);
+}
+
+createFooter();
 createMenu();
 if (page === "home") setupHome();
 if (page === "creators" || page === "brands") setupFilters();

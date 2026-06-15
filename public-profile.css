@@ -25,6 +25,8 @@
 .public-cta { margin-top: 42px; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-radius: 20px; background: #fff5ee; }
 .public-cta strong { font-size: 18px; }
 .public-cta p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.public-cta .is-sent { background: #147252; box-shadow: none; pointer-events: none; }
+.public-cta .is-disabled { background: #c9c3ba; box-shadow: none; cursor: not-allowed; pointer-events: none; }
 @media (max-width: 780px) {
   .public-profile-shell { margin-top: 24px; }
   .public-profile-card { grid-template-columns: 1fr; border-radius: 22px; }

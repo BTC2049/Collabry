@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /requests.html
+Disallow: /brand-profile.html
+Disallow: /creator-profile.html
+
+Sitemap: https://btc2049.github.io/Collabry/sitemap.xml

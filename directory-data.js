@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { supabaseConfig } from "./supabase-config.js";
+import { demoProfiles } from "./demo-data.js";
 
 const supabase = createClient(supabaseConfig.url, supabaseConfig.publishableKey);
 const grid = document.querySelector("#published-directory");
@@ -61,7 +62,7 @@ function card(profile) {
         : `<span class="avatar-letter ${profile.role === "brand" ? "brand-logo-shape" : ""}">${escapeHtml(name.slice(0,1))}</span>`}
     </div>
     <div class="profile-info">
-      <span class="category-label">${escapeHtml(category)}</span>
+      <span class="category-label">${escapeHtml(category)}${profile.is_demo ? " · 示範帳戶" : ""}</span>
       <div class="profile-meta"><h2>${escapeHtml(name)} <span class="verified">●</span></h2></div>
       <p>${escapeHtml(data.bio || "此會員已公開 Collabry 個人頁，歡迎進一步了解合作。")}</p>
       <div class="profile-tags"><span>${escapeHtml(platform)}</span><span>${escapeHtml(collaboration)}</span></div>
@@ -103,7 +104,12 @@ async function load() {
     grid.innerHTML = `<div class="directory-empty"><strong>無法讀取公開檔案</strong><p>${escapeHtml(error.message)}</p></div>`;
     return;
   }
-  profiles = data || [];
+  const realProfiles = data || [];
+  const demoIds = new Set(realProfiles.map((profile) => profile.id));
+  profiles = [
+    ...realProfiles,
+    ...demoProfiles[role].filter((profile) => !demoIds.has(profile.id)),
+  ];
   const total = document.querySelector(".directory-stat strong");
   if (total) total.textContent = profiles.length;
 

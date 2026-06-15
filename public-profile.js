@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { supabaseConfig } from "./supabase-config.js";
+import { findDemoProfile } from "./demo-data.js";
 
 const supabase = createClient(supabaseConfig.url, supabaseConfig.publishableKey);
 const params = new URLSearchParams(window.location.search);
@@ -46,7 +47,8 @@ async function getProfile() {
   const { data } = await supabase.rpc("get_published_profiles", {
     requested_role: requestedRole,
   });
-  return (data || []).find((profile) => profile.id === params.get("id")) || null;
+  return (data || []).find((profile) => profile.id === params.get("id"))
+    || findDemoProfile(params.get("id"), requestedRole);
 }
 
 function addLink(container, label, value) {
@@ -65,6 +67,11 @@ function render(profile) {
   const isBrand = profile.role === "brand";
   const name = text(profile.display_name, isBrand ? "未命名品牌" : "未命名創作者");
   document.title = `${name}｜Collabry`;
+  const description = text(data.bio, `${name} 在 Collabry 的公開合作資料。`);
+  document.querySelector('meta[name="description"]').content = description;
+  document.querySelector("#og-title").content = `${name}｜Collabry`;
+  document.querySelector("#og-description").content = description;
+  document.querySelector("#canonical-url").href = window.location.href.split("#")[0];
   document.querySelector("#public-name").textContent = name;
   document.querySelector("#public-bio").textContent = text(data.bio, "這位會員尚未填寫簡介。");
   document.querySelector("#public-role").textContent = isBrand ? "Brand profile" : "Creator profile";
@@ -112,9 +119,54 @@ function render(profile) {
   addLink(links, "社群帳號", data.handle);
 
   document.querySelector("#back-directory").href = isBrand ? "brands.html" : "creators.html";
-  document.querySelector("#public-match-link").href = `matching.html?role=${isBrand ? "creator" : "brand"}&target=${encodeURIComponent(profile.id)}`;
+  const matchButton = document.querySelector("#public-match-link");
+  if (profile.is_demo) {
+    matchButton.removeAttribute("href");
+    matchButton.textContent = "示範帳戶暫不接受邀請";
+    matchButton.classList.add("is-disabled");
+  } else {
+    matchButton.href = `matching.html?role=${isBrand ? "creator" : "brand"}&target=${encodeURIComponent(profile.id)}`;
+    matchButton.addEventListener("click", (event) => sendInterest(event, profile, matchButton));
+  }
   document.querySelector("#public-profile-loading").hidden = true;
   document.querySelector("#public-profile-card").hidden = false;
+}
+
+async function sendInterest(event, receiver, button) {
+  event.preventDefault();
+  if (button.classList.contains("is-sent")) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    sessionStorage.setItem("collabry-return-to", window.location.href);
+    window.location.href = "index.html#match";
+    return;
+  }
+
+  button.textContent = "傳送中...";
+  button.setAttribute("aria-disabled", "true");
+  const { data: sender } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  const message = sender?.role === "brand"
+    ? "我們對你的內容很有興趣，希望進一步討論合作。"
+    : "我對你們的品牌合作機會很有興趣，希望進一步了解。";
+  const { error } = await supabase.from("collaboration_requests").insert({
+    receiver_id: receiver.id,
+    message,
+  });
+
+  if (error && error.code !== "23505") {
+    button.textContent = error.message.includes("row-level security")
+      ? "雙方身分不符，無法送出"
+      : "傳送失敗，請再試一次";
+    button.removeAttribute("aria-disabled");
+    return;
+  }
+  button.textContent = error?.code === "23505" ? "已送出過邀請 ✓" : "合作興趣已送達 ✓";
+  button.classList.add("is-sent");
+  button.removeAttribute("href");
 }
 
 const profile = await getProfile();

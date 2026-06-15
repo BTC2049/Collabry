@@ -89,3 +89,8 @@ document.querySelectorAll("[data-request-tab]").forEach((button) => {
   });
 });
 load();
+window.addEventListener("focus", load);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) load();
+});
+window.setInterval(load, 15000);

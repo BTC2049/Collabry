@@ -63,10 +63,22 @@ Deno.serve(async (request) => {
   if (candidateError) return json({ message: "無法讀取媒合資料" }, 500);
 
   const body = await request.json().catch(() => ({}));
+  const demoCandidates = Array.isArray(body.demoCandidates)
+    ? body.demoCandidates
+        .filter((profile: Record<string, unknown>) =>
+          String(profile.id || "").startsWith("demo-") && profile.role === targetRole
+        )
+        .map(sanitizeProfile)
+    : [];
+  const realCandidates = (candidates || []).map(sanitizeProfile);
+  const candidateIds = new Set(realCandidates.map((profile) => profile.id));
   const payload = {
     user: sanitizeProfile(ownProfile),
     filters: body.filters || {},
-    candidates: (candidates || []).slice(0, 12).map(sanitizeProfile),
+    candidates: [
+      ...realCandidates,
+      ...demoCandidates.filter((profile) => !candidateIds.has(profile.id)),
+    ].slice(0, 12),
   };
   if (!payload.candidates.length) {
     return json({ rankings: [], remaining: credit.remaining, source: "gemini" });

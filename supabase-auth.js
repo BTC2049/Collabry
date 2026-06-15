@@ -378,12 +378,6 @@ if (!configured) {
     const publishButton = document.querySelector("#publish-profile");
     if (publishButton) publishButton.dataset.label = publishButton.textContent;
     updatePublishUI(Boolean(profileState?.is_published));
-    const emailInput = document.querySelector('#profile-form input[name="email"]');
-    if (emailInput && !emailInput.value) {
-      emailInput.value = session.user.email || "";
-      emailInput.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-
     if (
       localStorage.getItem("collabry-auth-pending") === "true" &&
       document.body.dataset.page === "home"

@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { supabaseConfig } from "./supabase-config.js";
+import { demoProfiles } from "./demo-data.js";
 
 const supabase = createClient(supabaseConfig.url, supabaseConfig.publishableKey);
 const container = document.querySelector("#live-match-results");
@@ -16,6 +17,9 @@ let currentRole =
 const requestedTarget = new URLSearchParams(window.location.search).get("target");
 let profiles = [];
 let aiRanking = new Map();
+let ruleRanking = new Map();
+let ownProfileData = {};
+let rematchRound = 0;
 
 function escapeHtml(value = "") {
   const element = document.createElement("div");
@@ -36,25 +40,55 @@ function profileSummary(profile) {
 
 function scoreFor(profile, index) {
   if (aiRanking.has(profile.id)) return aiRanking.get(profile.id).score;
-  const completed = Object.values(profile.profile_data || {}).filter(Boolean).length;
-  return Math.max(72, Math.min(96, 88 + completed - index * 2));
+  return ruleRanking.get(profile.id) ?? Math.max(62, 88 - index * 2);
+}
+
+function terms(value) {
+  return String(value || "")
+    .toLowerCase()
+    .split(/[\s、，,／/·・\-–—]+/)
+    .filter((item) => item.length > 1);
+}
+
+function overlap(left, right) {
+  const leftTerms = terms(left);
+  const rightText = String(right || "").toLowerCase();
+  return leftTerms.filter((term) => rightText.includes(term)).length;
+}
+
+function stableVariation(id) {
+  const seed = [...String(id)].reduce((total, char) => total + char.charCodeAt(0), 0);
+  return ((seed + rematchRound * 17) % 9) - 4;
+}
+
+function calculateRuleRanking() {
+  const filterData = Object.fromEntries(
+    Object.entries(filters).map(([key, input]) => [key, input?.value.trim() || ""])
+  );
+  ruleRanking = new Map(
+    profiles.map((profile) => {
+      const data = profile.profile_data || {};
+      const candidateText = JSON.stringify(data);
+      let score = 60;
+      score += Math.min(10, Object.values(data).filter(Boolean).length);
+      score += overlap(ownProfileData.category, data.category) * 7;
+      score += overlap(ownProfileData.platform, data.platform) * 4;
+      score += overlap(ownProfileData.collaboration, data.collaboration) * 5;
+      score += overlap(ownProfileData.audience || ownProfileData.creatorType, candidateText) * 3;
+      score += overlap(filterData.field, data.category) * 8;
+      score += overlap(filterData.platform, data.platform) * 6;
+      score += overlap(filterData.budget, data.budget || data.rate || data.collaboration) * 5;
+      score += stableVariation(profile.id);
+      if (profile.id === requestedTarget) score += 15;
+      return [profile.id, Math.max(55, Math.min(97, Math.round(score)))];
+    })
+  );
 }
 
 function render() {
-  const query = Object.values(filters)
-    .map((input) => input?.value.trim().toLowerCase())
-    .filter((value) => value && !value.startsWith("不限"));
-  const visible = profiles.filter((profile) => {
-    const haystack = JSON.stringify(profile.profile_data || {}).toLowerCase();
-    return query.every((term) => haystack.includes(term.toLowerCase()));
-  });
-  if (aiRanking.size) {
-    visible.sort((left, right) =>
-      (aiRanking.get(right.id)?.score || 0) - (aiRanking.get(left.id)?.score || 0)
-    );
-  }
+  const visible = [...profiles].sort((left, right) => scoreFor(right, 0) - scoreFor(left, 0));
 
-  count.textContent = `${visible.length} 位真實會員`;
+  count.textContent = `${visible.length} 位推薦對象`;
   container.replaceChildren();
 
   if (!visible.length) {
@@ -89,11 +123,13 @@ function render() {
       <div class="match-score">
         <strong>${scoreFor(profile, index)}%</strong>
         <small>契合度</small>
-        <button class="match-action" type="button">送出合作興趣</button>
+        <button class="match-action" type="button" ${profile.is_demo ? "disabled" : ""}>${profile.is_demo ? "目前暫不接受邀請" : "送出合作興趣"}</button>
       </div>`;
-    article.querySelector(".match-action").addEventListener("click", (event) => {
-      sendRequest(profile, event.currentTarget);
-    });
+    if (!profile.is_demo) {
+      article.querySelector(".match-action").addEventListener("click", (event) => {
+        sendRequest(profile, event.currentTarget);
+      });
+    }
     container.appendChild(article);
   });
 }
@@ -115,7 +151,7 @@ async function loadProfiles() {
 
   const { data: ownProfile, error: ownProfileError } = await supabase
     .from("profiles")
-    .select("role,profile_completed_at")
+    .select("role,profile_data,profile_completed_at")
     .eq("id", user.id)
     .maybeSingle();
   if (ownProfileError || !ownProfile?.profile_completed_at) {
@@ -134,6 +170,7 @@ async function loadProfiles() {
   }
 
   currentRole = ownProfile.role;
+  ownProfileData = ownProfile.profile_data || {};
   localStorage.setItem("collabry-role", currentRole);
   document.querySelector("#match-heading").textContent =
     currentRole === "creator" ? "為你精選的品牌合作" : "為你精選的創作者";
@@ -160,12 +197,18 @@ async function loadProfiles() {
     container.innerHTML = `<div class="match-empty"><strong>無法讀取媒合資料</strong><p>${escapeHtml(error.message)}</p></div>`;
     return;
   }
-  profiles = data || [];
+  const realProfiles = data || [];
+  const realIds = new Set(realProfiles.map((profile) => profile.id));
+  profiles = [
+    ...realProfiles,
+    ...demoProfiles[targetRole].filter((profile) => !realIds.has(profile.id)),
+  ];
   if (requestedTarget) {
     profiles.sort((left, right) =>
       left.id === requestedTarget ? -1 : right.id === requestedTarget ? 1 : 0
     );
   }
+  calculateRuleRanking();
   render();
 }
 
@@ -204,15 +247,18 @@ async function runAiMatching() {
     Object.entries(filters).map(([key, input]) => [key, input?.value.trim() || ""])
   );
   const { data, error } = await supabase.functions.invoke("ai-match", {
-    body: { filters: filterValues },
+    body: {
+      filters: filterValues,
+      demoCandidates: profiles.filter((profile) => profile.is_demo),
+    },
   });
 
   button.disabled = false;
   button.textContent = "重新 AI 智慧排序";
-  if (error || !data?.rankings) {
+  if (error || !data?.rankings?.length) {
     aiRanking.clear();
     note.className = "ai-match-note error";
-    note.textContent = data?.message || "AI 免費額度暫時無法使用，已保留一般媒合排序。";
+    note.textContent = data?.message || "AI 暫時沒有產生新排序，已保留固定演算法推薦。";
     render();
     return;
   }
@@ -231,14 +277,24 @@ async function runAiMatching() {
   render();
 }
 
+function rematch() {
+  rematchRound += 1;
+  aiRanking.clear();
+  calculateRuleRanking();
+  const note = document.querySelector("#ai-match-note");
+  note.className = "ai-match-note success";
+  note.textContent = "已依最新條件重新媒合，所有候選人的契合度已更新。";
+  render();
+}
+
 window.addEventListener("collabry:match-role-changed", (event) => {
   currentRole = event.detail.role;
   loadProfiles();
 });
 Object.values(filters).forEach((input) => {
-  input?.addEventListener("change", render);
-  input?.addEventListener("input", render);
+  input?.addEventListener("change", rematch);
 });
+document.querySelector("#rematch-button")?.addEventListener("click", rematch);
 document.querySelector("#ai-match-button")?.addEventListener("click", runAiMatching);
 
 loadProfiles();

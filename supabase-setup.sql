@@ -172,6 +172,13 @@ update public.profiles
 set is_admin = true
 where lower(email) = lower('willia098888@gmail.com');
 
+-- Remove contact emails that older frontend versions copied directly from
+-- Google login. Members can enter their preferred collaboration email again.
+update public.profiles
+set profile_data = profile_data - 'email'
+where nullif(profile_data ->> 'email', '') is not null
+  and lower(profile_data ->> 'email') = lower(email);
+
 -- Collaboration requests: sender creates, receiver responds, both can view.
 create table if not exists public.collaboration_requests (
   id uuid primary key default gen_random_uuid(),
@@ -349,7 +356,8 @@ $$;
 revoke all on function public.get_published_profiles(text) from public;
 grant execute on function public.get_published_profiles(text) to anon, authenticated;
 
--- Return both inbox and sent requests with the other party's public identity.
+-- Return both inbox and sent requests with contact details only after acceptance.
+drop function if exists public.get_my_collaboration_requests();
 create or replace function public.get_my_collaboration_requests()
 returns table (
   id uuid,
@@ -358,6 +366,8 @@ returns table (
   other_name text,
   other_avatar text,
   other_email text,
+  other_line text,
+  other_contact text,
   message text,
   status text,
   created_at timestamptz,
@@ -374,7 +384,9 @@ as $$
     other_profile.id,
     other_profile.display_name,
     other_profile.avatar_url,
-    case when request.status = 'accepted' then other_profile.email else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'email', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'line', '') else null end,
+    case when request.status = 'accepted' then nullif(other_profile.profile_data ->> 'contact', '') else null end,
     request.message,
     request.status,
     request.created_at,

@@ -14,14 +14,17 @@
 .request-message { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
 .request-time { display: block; margin-top: 8px; color: #949ba1; font-size: 10px; }
 .request-contact {
-  margin-top: 10px;
-  display: inline-flex;
+  margin-top: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 5px;
+  border-radius: 12px;
+  background: #edf8f3;
   color: #17684c;
-  font-size: 11px;
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  font-size: 12px;
+  font-weight: 700;
 }
+.request-contact a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .request-actions { display: flex; gap: 8px; }
 .request-actions button { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: white; cursor: pointer; font-size: 11px; font-weight: 800; }
 .request-actions .accept { border-color: var(--orange); background: var(--orange); color: white; }

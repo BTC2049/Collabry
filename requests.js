@@ -17,6 +17,16 @@ function statusLabel(status) {
 function formatDate(date) {
   return new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium", timeStyle: "short" }).format(new Date(date));
 }
+function acceptedContact(request) {
+  if (request.status !== "accepted") return "";
+  const items = [];
+  if (request.other_contact) items.push(`<span>聯絡人：${escapeHtml(request.other_contact)}</span>`);
+  if (request.other_email) items.push(`<a href="mailto:${escapeHtml(request.other_email)}">合作 Email：${escapeHtml(request.other_email)}</a>`);
+  if (request.other_line) items.push(`<span>LINE ID：${escapeHtml(request.other_line)}</span>`);
+  return items.length
+    ? `<div class="request-contact">${items.join("")}</div>`
+    : `<div class="request-contact"><span>對方尚未在平台填寫聯絡資訊</span></div>`;
+}
 function render() {
   const visible = requests.filter((item) => item.direction === activeTab);
   list.replaceChildren();
@@ -35,9 +45,7 @@ function render() {
         <h2>${escapeHtml(request.other_name || "Collabry 使用者")}</h2>
         <p class="request-message">${escapeHtml(request.message || "")}</p>
         <small class="request-time">${formatDate(request.created_at)}</small>
-        ${request.status === "accepted" && request.other_email
-          ? `<a class="request-contact" href="mailto:${escapeHtml(request.other_email)}">聯絡 Email：${escapeHtml(request.other_email)}</a>`
-          : ""}
+        ${acceptedContact(request)}
       </div>`;
     if (request.direction === "received" && request.status === "pending") {
       const actions = document.createElement("div");
@@ -77,7 +85,7 @@ async function respond(id, status) {
   if (!error) {
     const request = requests.find((item) => item.id === id);
     if (request) request.status = status;
-    render();
+    await load();
   }
 }
 document.querySelectorAll("[data-request-tab]").forEach((button) => {
